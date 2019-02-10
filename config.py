@@ -44,7 +44,7 @@ TOKENIZER_TEMPLATE = '{variation}_{level}_tokenizer.pkl'
 VOCABULARY_TEMPLATE = '{variation}_{level}_vocab.pkl'
 
 ANALYSIS_LOG_TEMPLATE = '{variation}_analysis.log'
-PERFORMANCE_LOG_TEMPLATE = '{variation}——performance.log'
+PERFORMANCE_LOG_TEMPLATE = '{variation}_performance.log'
 
 EXTERNAL_WORD_VECTORS_DIR = path.join(RAW_DATA_DIR, 'word_embeddings/')
 EXTERNAL_WORD_VECTORS_FILENAME = {}

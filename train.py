@@ -154,7 +154,7 @@ if __name__ == '__main__':
     train_model('simplified', 'char', 'w2v_data', False, 64, 0.001, 'adam', 'vdcnn')
 
     train_model('traditional', 'word', 'w2v_data', True, 64, 0.001, 'adam', 'bilstm')
-    train_model('traditionaltraditional', 'word', 'w2v_data', True, 64, 0.001, 'adam', 'dcnn')
+    train_model('traditional', 'word', 'w2v_data', True, 64, 0.001, 'adam', 'dcnn')
     train_model('traditional', 'word', 'w2v_data', True, 64, 0.001, 'adam', 'dpcnn')
     train_model('traditional', 'word', 'w2v_data', True, 64, 0.001, 'adam', 'han')
     train_model('traditional', 'word', 'w2v_data', True, 64, 0.001, 'adam', 'multicnn')
