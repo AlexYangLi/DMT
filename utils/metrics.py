@@ -14,7 +14,7 @@
 
 """
 
-from sklearn.metrics import accuracy_score, f1_score
+from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
 
 
 def eval_acc(y_true, y_pred):
@@ -23,3 +23,11 @@ def eval_acc(y_true, y_pred):
 
 def eval_f1(y_true, y_pred):
     return f1_score(y_true, y_pred)
+
+
+def eval_precision(y_true, y_pred):
+    return precision_score(y_true, y_pred)
+
+
+def eval_recall(y_true, y_pred):
+    return recall_score(y_true, y_pred)

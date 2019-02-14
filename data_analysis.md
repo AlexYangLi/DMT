@@ -1,5 +1,4 @@
 
-- SNIL
 
 | item            | size   |
 |-----------------|--------|
@@ -22,3 +21,6 @@
 | char_len <= 48  | 0.972  |
 | word_vocab      | 23505  |
 | char_vocab      | 3656   |
+| char_unigram    | 3656   |
+| char_bigram     | 29142  |
+| char_trigram    | 124820 |

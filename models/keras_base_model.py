@@ -16,7 +16,6 @@
 
 import os
 import abc
-import logging
 import numpy as np
 
 from keras.callbacks import ModelCheckpoint, EarlyStopping
@@ -25,7 +24,7 @@ from utils.metrics import eval_acc, eval_f1
 
 
 class KerasBaseModel(BaseModel):
-    def __init__(self, config):
+    def __init__(self, config, **kwargs):
         super(KerasBaseModel, self).__init__()
         self.config = config
         self.level = self.config.input_level
@@ -36,7 +35,7 @@ class KerasBaseModel(BaseModel):
         self.callbacks = []
         self.init_callbacks()
 
-        self.model = self.build()
+        self.model = self.build(**kwargs)
 
     def init_callbacks(self):
         self.callbacks.append(ModelCheckpoint(
@@ -55,22 +54,20 @@ class KerasBaseModel(BaseModel):
             verbose=self.config.early_stopping_verbose
         ))
 
-    def load_weights(self, filename):
+    def load_model(self, filename):
         self.model.load_weights(filename)
 
     def load_best_model(self):
-        logging.info('loading model checkpoint: %s.hdf5\n' % self.config.exp_name)
-        self.load_weights(os.path.join(self.config.checkpoint_dir, '%s.hdf5' % self.config.exp_name))
-        logging.info('Model loaded')
+        print('Logging Info - loading model checkpoint: %s.hdf5\n' % self.config.exp_name)
+        self.load_model(os.path.join(self.config.checkpoint_dir, '%s.hdf5' % self.config.exp_name))
+        print('Logging Info - Model loaded')
 
     @abc.abstractmethod
-    def build(self):
+    def build(self, **kwargs):
         """Build the model"""
 
     def train(self, data_train, data_dev=None):
-        if self.model is None:
-            self.model = self.build()
-        logging.info('start training...')
+        print('Logging Info - start training...')
         x_train, y_train = data_train['sentence'], data_train['label']
         if data_dev is None:
             self.model.fit(x=x_train, y=y_train, batch_size=self.config.batch_size, epochs=self.config.n_epoch,
@@ -79,7 +76,7 @@ class KerasBaseModel(BaseModel):
             x_dev, y_dev = data_dev['sentence'], data_dev['label']
             self.model.fit(x=x_train, y=y_train, batch_size=self.config.batch_size, epochs=self.config.n_epoch,
                            validation_data=(x_dev, y_dev), callbacks=self.callbacks)
-        logging.info('training end...')
+        print('Logging Info - training end...')
 
     def evaluate(self, data):
         predictions = self.predict(data['sentence'])

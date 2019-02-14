@@ -51,6 +51,11 @@ def load_data():
     data_trad_dev = read_raw_data(TRAD_DEV_FILENAME, set_variation='traditional')
     print('Logging Info - Traditional: train - {}, dev - {}'.format(data_trad_train.shape, data_trad_dev.shape))
 
+    # data_all_train = pd.concat([data_simp_train, data_trad_train])
+    # data_all_dev = pd.concat([data_simp_dev, data_trad_dev])
+    # data_all_train['variation'] = 'all'
+    # data_all_dev['variation'] = 'all'
+
     # concatenate all data together
     data_train = pd.concat([data_simp_train, data_trad_train])
     data_dev = pd.concat([data_simp_dev, data_trad_dev])

@@ -43,6 +43,12 @@ EMBEDDING_MATRIX_TEMPLATE = '{variation}_{type}_embeddings.npy'
 TOKENIZER_TEMPLATE = '{variation}_{level}_tokenizer.pkl'
 VOCABULARY_TEMPLATE = '{variation}_{level}_vocab.pkl'
 
+TRAIN_NGRAM_DATA_TEMPLATE = '{variation}_{type}_{level}_{ngram_range}_train.pkl'
+DEV_NGRAM_DATA_TEMPLATE = '{variation}_{type}_{level}_{ngram_range}_dev.pkl'
+TEST_NGRAM_DATA_TEMPLATE = '{variation}_{type}_{level}_{ngram_range}_test.pkl'
+
+VECTORIZER_TEMPLATE = '{variation}_{type}_{level}_{ngram_range}_vectorizer.pkl'
+
 ANALYSIS_LOG_TEMPLATE = '{variation}_analysis.log'
 PERFORMANCE_LOG_TEMPLATE = '{variation}_performance.log'
 

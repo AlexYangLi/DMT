@@ -32,8 +32,8 @@ class BaseModel(object):
         """Train the model"""
 
     @abc.abstractmethod
-    def load_weights(self, filename):
-        """Load weights from the `filename`"""
+    def load_model(self, filename):
+        """Load model from the `filename`"""
 
     @abc.abstractmethod
     def evaluate(self, data):
