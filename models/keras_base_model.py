@@ -79,12 +79,10 @@ class KerasBaseModel(BaseModel):
         print('Logging Info - training end...')
 
     def evaluate(self, data):
-        predictions = self.predict(data['sentence'])
+        predictions = self.predict(data)
         if self.config.loss_function == 'binary_crossentropy':
-            predictions = np.array([1 if prediction >= self.config.binary_threshold else 0 for prediction in predictions])
             labels = data['label']
         else:
-            predictions = np.argmax(predictions, axis=-1)
             labels = np.argmax(data['label'], axis=-1)
 
         acc = eval_acc(labels, predictions)
@@ -93,4 +91,14 @@ class KerasBaseModel(BaseModel):
         return acc, f1
 
     def predict(self, data):
-        return self.model.predict(data)
+        predictions = self.model.predict(data['sentence'])
+        if self.config.loss_function == 'binary_crossentropy':
+            return np.array([1 if prediction >= self.config.binary_threshold else 0 for prediction in predictions])
+        else:
+            return np.argmax(predictions, axis=-1)
+
+    def predict_proba(self, data):
+        pred_proba = self.model.predict(data['sentence'])
+        if self.config.loss_function == 'binary_crossentropy':
+            pred_proba = pred_proba.flatten()
+        return pred_proba

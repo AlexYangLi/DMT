@@ -1,0 +1,48 @@
+
+### method
+
+- 孪生结构和dialect matching (不行)
+
+- 数据增强（不明显）
+
+- 分析一下错误的地方
+
+- 不同的embedding
+
+- 加其他的特征：PMI，出没出现特定词
+
+- 调参：网格搜索+交叉验证
+
+- 再多点尝试word-ngram的结合，还有char和word的结合，方便写论文
+
+- 再尝试集成模型：
+
+linear SVM
+
+
+### paper
+
+集成那篇可以参考一些写作
+
+- Introduction: 先说语言识别，再说方言识别论文可以说现在没什么人研究中国方言的区别，难点，应用场景，可以简单介绍这个vardial任务。之后再简单介绍我们做的东西
+To the best of our knowledge,
+methods to discriminate between these two languages haven’t been substantially investigated
+
+- Related work:
+
+- Main content:
+ 1. data
+  数据集的介绍，长度分析 perfectly balanced label distribution， We did not perform any preprocessing, except for truncating the longer documents (and padding the
+shorter ones) to 250 characters and 100 tokens for the RNN models. the gap is
+particularly large
+ 2. model
+
+
+- results: confusion matrix(可以加)
+首先是n-gram的比较图，分3个图来讲解，之后就是combination（用表格来呈现）
+
+可以说虽然大家都说svm好，但是贝叶斯更好
+
+- conclusion and future work
+
+可以说尝试区别更多的中文，包括香港澳门这些

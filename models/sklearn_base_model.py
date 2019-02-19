@@ -59,7 +59,7 @@ class SklearnBaseModel(BaseModel):
         print('Model saved')
 
     def evaluate(self, data):
-        predictions = self.predict(data['sentence'])
+        predictions = self.predict(data)
         labels = data['label']
 
         acc = eval_acc(labels, predictions)
@@ -70,7 +70,10 @@ class SklearnBaseModel(BaseModel):
         return acc, f1, p, r
 
     def predict(self, data):
-        return self.model.predict(data)
+        return self.model.predict(data['sentence'])
+
+    def predict_proba(self, data):
+        return self.model.predict_proba(data['sentence'])
 
 
 class SVMModel(SklearnBaseModel):

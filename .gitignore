@@ -105,11 +105,11 @@ venv.bak/
 
 .idea
 
-idea
+ckpt
 
-./data
+data
 
-./log
+log
 
-./ckpt
+./idea.md
 

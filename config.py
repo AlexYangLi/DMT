@@ -66,6 +66,8 @@ class ModelConfig(object):
         self.input_level = 'word'
         self.word_max_len = 66
         self.char_max_len = 155
+        self.aug_word_max_len = 44
+        self.aug_char_max_len = 103
         self.max_len = {'word': self.word_max_len, 'char': self.char_max_len}
         self.word_embed_type = 'w2v'
         self.word_embed_dim = 300

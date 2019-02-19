@@ -31,3 +31,7 @@ def eval_precision(y_true, y_pred):
 
 def eval_recall(y_true, y_pred):
     return recall_score(y_true, y_pred)
+
+
+def eval_all(y_true, y_pred):
+    return eval_acc(y_true, y_pred), eval_f1(y_true, y_pred), eval_precision(y_true, y_pred), eval_recall(y_true, y_pred)

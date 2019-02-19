@@ -34,6 +34,8 @@ from utils.analysis import analyze_len_distribution, analyze_class_distribution
 from utils.embeddings import train_w2v
 from utils.io import pickle_dump, format_filename, write_log
 
+# Todo: add prepare_ngram_feature.py and data_augment.py
+
 
 def get_sentence_label(data):
     labels = data['label'].map(LABELS).tolist()
