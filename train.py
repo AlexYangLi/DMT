@@ -21,7 +21,7 @@ import numpy as np
 from keras import optimizers
 
 from config import ModelConfig, LOG_DIR, PERFORMANCE_LOG_TEMPLATE, PROCESSED_DATA_DIR, EMBEDDING_MATRIX_TEMPLATE, \
-    TRAIN_NGRAM_DATA_TEMPLATE, DEV_NGRAM_DATA_TEMPLATE
+    TRAIN_NGRAM_DATA_TEMPLATE, DEV_NGRAM_DATA_TEMPLATE, VARIATIONS
 from models.keras_bilstm_model import BiLSTM
 from models.keras_cnnrnn_model import CNNRNN
 from models.keras_dcnn_model import DCNN
@@ -234,42 +234,43 @@ def train_match_model(variation, input_level, word_embed_type, word_embed_traina
 
 
 if __name__ == '__main__':
-    # for encoder_type in ['lstm', 'gru', 'bilstm', 'bigru', 'bilstm_max_pool', 'bilstm_mean_pool', 'concat_attention',
-    #                      'self_attention', 'h_cnn', 'cnn', 'dot_attention', 'mul_attention', 'add_attention']:
-    #     for metrics in ['sigmoid', 'manhattan', 'euclidean']:
-    #         for variation in ['simplified', 'traditional']:
-    #             train_match_model(variation, 'word', 'w2v_data', True, 64, 0.001, 'adam', encoder_type, metrics)
-    for model_name in ['svm', 'lr', 'mnb']:
-        for variation in ['simplified', 'traditional']:
-            for vectorizer_type in ['binary']:
-                train_ml_model(model_name, variation, vectorizer_type, 'char', (4, 4))
-                # train_ml_model(model_name, variation, vectorizer_type, 'char', (2, 2))
-                # train_ml_model(model_name, variation, vectorizer_type, 'char', (1, 3))
-                # train_ml_model(model_name, variation, vectorizer_type, 'word', (2, 2))
-                # train_ml_model(model_name, variation, vectorizer_type, 'word', (3, 3))
+    # train dl model
+    for variation in VARIATIONS:
+            for word_embed_type in ['w_fasttext_data', 'w_glove_data']:
+                for model_name in ['bilstm', 'cnn', 'cnnrnn', 'dcnn', 'dpcnn', 'han', 'multicnn', 'rcnn', 'rnncnn',
+                                   'vdcnn']:
+                    train_dl_model(variation, 'word', word_embed_type, True, 64, 0.01, 'adam', model_name)
 
+    # train ml model
+    # for variation in VARIATIONS:
+    #     for model_name in ['svm', 'lr', 'mnb']:
+    #             for vectorizer_type in ['binary']:
+    #                 train_ml_model(model_name, variation, vectorizer_type, 'char', (1, 1))
+    #                 train_ml_model(model_name, variation, vectorizer_type, 'char', (2, 2))
+    #                 train_ml_model(model_name, variation, vectorizer_type, 'char', (3, 3))
+    #                 train_ml_model(model_name, variation, vectorizer_type, 'char', (4, 4))
+    #                 train_ml_model(model_name, variation, vectorizer_type, 'char', (1, 3))
+    #                 train_ml_model(model_name, variation, vectorizer_type, 'char', (2, 3))
     #
-    # train_dl_model('simplified_aug', 'word', 'w2v_data', True, 64, 0.001, 'adam', 'bilstm')
-    # train_dl_model('simplified_aug', 'word', 'w2v_data', True, 64, 0.001, 'adam', 'cnn')
-    # train_dl_model('simplified_aug', 'word', 'w2v_data', True, 64, 0.001, 'adam', 'cnnrnn')
-    # train_dl_model('simplified_aug', 'word', 'w2v_data', True, 64, 0.001, 'adam', 'dcnn')
-    # train_dl_model('simplified_aug', 'word', 'w2v_data', True, 64, 0.001, 'adam', 'dpcnn')
-    # train_dl_model('simplified_aug', 'word', 'w2v_data', True, 64, 0.001, 'adam', 'han')
-    # train_dl_model('simplified_aug', 'word', 'w2v_data', True, 64, 0.001, 'adam', 'multicnn')
-    # train_dl_model('simplified_aug', 'word', 'w2v_data', True, 64, 0.001, 'adam', 'rcnn')
-    # train_dl_model('simplified_aug', 'word', 'w2v_data', True, 64, 0.001, 'adam', 'rnncnn')
-    # train_dl_model('simplified_aug', 'word', 'w2v_data', True, 64, 0.001, 'adam', 'vdcnn')
+    #                 train_ml_model(model_name, variation, vectorizer_type, 'word', (1, 1))
+    #                 train_ml_model(model_name, variation, vectorizer_type, 'word', (2, 2))
+    #                 train_ml_model(model_name, variation, vectorizer_type, 'word', (3, 3))
+    #                 train_ml_model(model_name, variation, vectorizer_type, 'word', (4, 4))
+    #                 train_ml_model(model_name, variation, vectorizer_type, 'word', (1, 3))
+    #                 train_ml_model(model_name, variation, vectorizer_type, 'word', (2, 3))
+    #
+    #                 train_ml_model(model_name, variation, vectorizer_type, ['char', 'word'], [(2, 3), (1, 1)])
 
-    # train_dl_model('traditional_aug', 'word', 'w2v_data', True, 64, 0.001, 'adam', 'bilstm')
-    # train_dl_model('traditional_aug', 'word', 'w2v_data', True, 64, 0.001, 'adam', 'cnn')
-    # train_dl_model('traditional_aug', 'word', 'w2v_data', True, 64, 0.001, 'adam', 'cnnrnn')
-    # train_dl_model('traditional_aug', 'word', 'w2v_data', True, 64, 0.001, 'adam', 'dcnn')
-    # train_dl_model('traditional_aug', 'word', 'w2v_data', True, 64, 0.001, 'adam', 'dpcnn')
-    # train_dl_model('traditional_aug', 'word', 'w2v_data', True, 64, 0.001, 'adam', 'han')
-    # train_dl_model('traditional_aug', 'word', 'w2v_data', True, 64, 0.001, 'adam', 'multicnn')
-    # train_dl_model('traditional_aug', 'word', 'w2v_data', True, 64, 0.001, 'adam', 'rcnn')
-    # train_dl_model('traditional_aug', 'word', 'w2v_data', True, 64, 0.001, 'adam', 'rnncnn')
-    # train_dl_model('traditional_aug', 'word', 'w2v_data', True, 64, 0.001, 'adam', 'vdcnn')
+    # train dialect matching model
+    # for variation in VARIATIONS:
+    #     for encoder_type in ['lstm', 'gru', 'bilstm', 'bigru', 'bilstm_max_pool', 'bilstm_mean_pool',
+    #                          'concat_attention', 'self_attention', 'h_cnn', 'cnn', 'dot_attention', 'mul_attention',
+    #                          'add_attention']:
+    #         for metrics in ['sigmoid', 'manhattan', 'euclidean']:
+    #             train_match_model(variation, 'word', 'w2v_data', True, 64, 0.001, 'adam', encoder_type, metrics)
+
+
+
 
 
 
