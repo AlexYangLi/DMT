@@ -19,7 +19,7 @@
 | char_avg_len    | 24.09  |
 | char_median_len | 22     |
 | char_len <= 48  | 0.972  |
-| word_vocab      | 23505  |
+| word_vocab      |  你们 部门，，  |
 | char_vocab      | 3656   |
 | char_unigram    | 3656   |
 | char_bigram     | 29142  |

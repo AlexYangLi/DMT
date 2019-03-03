@@ -20,7 +20,7 @@ import numpy as np
 
 from keras.callbacks import ModelCheckpoint, EarlyStopping
 from models.base_model import BaseModel
-from utils.metrics import eval_acc, eval_f1
+from utils.metrics import eval_acc, eval_f1, return_error_index
 
 
 class KerasBaseModel(BaseModel):
@@ -91,7 +91,7 @@ class KerasBaseModel(BaseModel):
         return acc, f1
 
     def predict(self, data):
-        predictions = self.model.predict(data['sentence'])
+        predictions = self.predict_proba(data)
         if self.config.loss_function == 'binary_crossentropy':
             return np.array([1 if prediction >= self.config.binary_threshold else 0 for prediction in predictions])
         else:
@@ -102,3 +102,17 @@ class KerasBaseModel(BaseModel):
         if self.config.loss_function == 'binary_crossentropy':
             pred_proba = pred_proba.flatten()
         return pred_proba
+
+    def error_analyze(self, data):
+        pred_probas = self.predict_proba(data)
+        if self.config.loss_function == 'binary_crossentropy':
+            pred_labels = np.array([1 if pred_prob >= self.config.binary_threshold else 0 for pred_prob in pred_probas])
+        else:
+            pred_labels = np.argmax(pred_probas, axis=-1)
+        if self.config.loss_function == 'binary_crossentropy':
+            labels = data['label']
+        else:
+            labels = np.argmax(data['label'], axis=-1)
+        error_index = return_error_index(labels, pred_labels)
+
+        return error_index, pred_probas[error_index]

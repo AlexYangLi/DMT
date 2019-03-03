@@ -16,15 +16,19 @@
 import os
 import abc
 
+import numpy as np
 from sklearn.externals import joblib
 from sklearn.svm import LinearSVC
 from sklearn.linear_model import LogisticRegression, SGDClassifier
 from sklearn.naive_bayes import GaussianNB, MultinomialNB, BernoulliNB
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.calibration import CalibratedClassifierCV
 from xgboost import XGBClassifier
 
+
 from models.base_model import BaseModel
-from utils.metrics import eval_acc, eval_f1, eval_precision, eval_recall
+from utils.metrics import eval_acc, eval_f1, eval_precision, eval_recall, return_error_index
 
 
 class SklearnBaseModel(BaseModel):
@@ -59,7 +63,12 @@ class SklearnBaseModel(BaseModel):
         print('Model saved')
 
     def evaluate(self, data):
-        predictions = self.predict(data)
+        try:
+            pred_probas = self.predict_proba(data)[:, 1]
+            predictions = np.array([1 if proba >= self.config.binary_threshold else 0 for proba in pred_probas])
+        except AttributeError:
+            predictions = self.predict(data)
+
         labels = data['label']
 
         acc = eval_acc(labels, predictions)
@@ -73,12 +82,24 @@ class SklearnBaseModel(BaseModel):
         return self.model.predict(data['sentence'])
 
     def predict_proba(self, data):
+        # Note: some model (eg. SVM) doesn't have predict_proba func
         return self.model.predict_proba(data['sentence'])
+
+    def error_analyze(self, data):
+        labels = data['label']
+        pred_labels = self.predict(data)
+        error_index = return_error_index(labels, pred_labels)
+
+        try:
+            pred_probas = self.predict_proba(data)
+            return error_index, pred_probas[error_index]
+        except AttributeError:
+            return error_index, pred_labels[error_index]
 
 
 class SVMModel(SklearnBaseModel):
     def build(self, **kwargs):
-        return LinearSVC(**kwargs)
+        return CalibratedClassifierCV(LinearSVC(**kwargs))  # use probability calibration to help svm output probability
 
 
 class LRModel(SklearnBaseModel):
@@ -119,5 +140,10 @@ class GBDTModel(SklearnBaseModel):
 class XGBoostModel(SklearnBaseModel):
     def build(self, **kwargs):
         return XGBClassifier(**kwargs)
+
+
+class LDAModel(SklearnBaseModel):
+    def build(self, **kwargs):
+        return LinearDiscriminantAnalysis(**kwargs)
 
 

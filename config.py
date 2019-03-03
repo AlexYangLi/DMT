@@ -22,6 +22,7 @@ RAW_DATA_DIR = './raw_data'
 PROCESSED_DATA_DIR = './data'
 LOG_DIR = './log'
 MODEL_SAVED_DIR = './ckpt'
+IMG_DIR = './img'
 
 SIMP_DIR = path.join(RAW_DATA_DIR, 'TRAININGSET-DMT_SIMP-VARDIAL2019')
 SIMP_TRAIN_FILENAME = path.join(SIMP_DIR, 'train.txt')
@@ -56,6 +57,7 @@ EXTERNAL_WORD_VECTORS_DIR = path.join(RAW_DATA_DIR, 'word_embeddings/')
 EXTERNAL_WORD_VECTORS_FILENAME = {}
 
 LABELS = {'T': 0, 'M': 1}
+ID_TO_LABELS = {0: 'T', 1: 'M'}
 VARIATIONS = ['simplified', 'traditional']
 
 

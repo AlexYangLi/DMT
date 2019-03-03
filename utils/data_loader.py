@@ -21,7 +21,8 @@ import pandas as pd
 from scipy.sparse import hstack, coo_matrix, csr_matrix, csc_matrix
 
 from config import PROCESSED_DATA_DIR, TRAIN_IDS_MATRIX_TEMPLATE, DEV_IDS_MATRIX_TEMPLATE, TEST_IDS_MATRIX_TEMPLATE, \
-    TRAIN_NGRAM_DATA_TEMPLATE, DEV_NGRAM_DATA_TEMPLATE, TEST_NGRAM_DATA_TEMPLATE, LABELS
+    TRAIN_NGRAM_DATA_TEMPLATE, DEV_NGRAM_DATA_TEMPLATE, TEST_NGRAM_DATA_TEMPLATE, LABELS, TRAIN_DATA_TEMPLATE, \
+    DEV_DATA_TEMPLATE, TEST_DATA_TEMPLATE
 from utils.io import pickle_load, format_filename
 
 
@@ -45,6 +46,18 @@ def read_raw_data(filename, set_variation=None):
         raw_data['variation'] = set_variation
 
     return raw_data
+
+
+def load_processed_text_data(variation, data_type):
+    if data_type == 'train':
+        filename = format_filename(PROCESSED_DATA_DIR, TRAIN_DATA_TEMPLATE, variation=variation)
+    elif data_type == 'valid' or data_type == 'dev':
+        filename = format_filename(PROCESSED_DATA_DIR, DEV_DATA_TEMPLATE, variation=variation)
+    elif data_type == 'test':
+        filename = format_filename(PROCESSED_DATA_DIR, TEST_DATA_TEMPLATE, variation=variation)
+    else:
+        raise ValueError('Data Type Not Understood: {}'.format(data_type))
+    return pickle_load(filename)
 
 
 def load_processed_data(variation, level, data_type):

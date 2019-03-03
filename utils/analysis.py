@@ -33,9 +33,12 @@ def analyze_len_distribution(sentences, level):
     min_len = np.min(text_len)
     avg_len = np.average(text_len)
     median_len = np.median(text_len)
-    print('Logging Info - max len: {}, min_len: {}, avg_len: {}, median_len: {}'.format(max_len, min_len, avg_len,
-                                                                                        median_len))
-    len_dist.update({'max len:': max_len, 'min_len': min_len, 'avg len': avg_len, 'median len': median_len})
+    std_len = np.std(text_len)
+    print('Logging Info - max len: {}, min_len: {}, avg_len: {}, median_len: {}, std_dev: {}'.format(max_len, min_len,
+                                                                                                     avg_len, median_len,
+                                                                                                     std_len))
+    len_dist.update({'max len:': max_len, 'min_len': min_len, 'avg len': avg_len, 'median len': median_len,
+                     'std len:': std_len})
 
     _start_log_ratio = 0.95
     for i in range(int(median_len), int(max_len), 2):

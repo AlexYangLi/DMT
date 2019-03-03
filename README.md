@@ -45,7 +45,7 @@ Conv + max pooling + Bidirectional gru + max pooling over time.
 ### ML based model
 
 1. features  
-binary ngram(1-3), tf ngram(1-3), tfidf ngram(1-3) in character & word level
+binary ngram(1-3), tf ngram(1-3), tfidf ngram(1-3), skip ngram (1-3 skip bigram or trigram)in character & word level, pos ngram
 
 2. models  
 lr, svm, navie-bayers, random-forest, gradientboost, xgboost
@@ -61,6 +61,14 @@ Learn similarities between the same dialects and dissimilarities between differe
 - max ensemble
 
 - majortiy-vote ensemble
+
+- lda
+
+- xgboost
+
+- rf
+
+- lightgbm
 
 
 ### Pre-processing
@@ -84,6 +92,8 @@ python3 train.py
 |  model                               | val_acc  | val_f1  |  train_time(one titan x) |
 |--------------------------------------|----------|---------|--------------------------|
 |simplified_bilstm_word_w2v_data_tune  |0.9       | 0.8996  |00:08:26|
+|simplified_bilstm_word_w2v_data_tune_0.48| 0.9015| 0.9016  |-       |
+|simplified_bilstm_word_w2v_data_tune_0.46| 0.902 | 0.9025  |-       |
 |simplified_aug_bilstm_word_w2v_data_tune|0.8965  | 0.8965  |00:10:00|
 |simlifiedd_cnnrnn_word_w2v_data_tune  |0.8935    | 0.8923  |00:09:07|
 |simplified_dcnn_word_w2v_data_tune    |0.897     | 0.8971  |00:02:08|
@@ -127,6 +137,8 @@ python3 train.py
 |  model                                | val_acc  | val_f1  |  train_time(one titan x) |
 |---------------------------------------|----------|---------|--------------------------|
 |traditional_bilstm_word_w2v_data_tune  |0.9115    | 0.9097  |00:09:07|
+|traditional_bilstm_word_w2v_data_tune_0.48 |0.913 | 0.9116  |-       |
+|traditional_bilstm_word_w2v_data_tune_0.46 |0.912 | 0.9108  |-       |
 |traditional_cnnrnn_word_w2v_data_tune  |0.908     | 0.9079  |00:07:07|
 |traditional_dcnn_word_w2v_data_tune    |0.908     | 0.9089  |00:02:17|
 |traditional_dpcnn_word_w2v_data_tune   |0.907     | 0.9067  |00:01:06|
@@ -166,9 +178,11 @@ python3 train.py
 
 - conclusion
 1. word level input is better than charracter level input
-2. fine-tuning word embeddings performs better than fixing word embeddings
-3. `BiLSTM` performs best, but other models except `vdccn` and `multicnn` performs very close.
-4. data agumentaion doesn't help.
+2. word2vec is better than fasttext and glove
+3. fine-tuning word embeddings is better than fixing word embeddings
+4. `BiLSTM` performs best, but other models except `vdccn` and `multicnn` performs very close.
+5. data agumentaion doesn't help.
+6. skip ngram doesn't help
 
 ### Performance of ml based model
 
@@ -176,15 +190,20 @@ python3 train.py
 
 | model                                 | val_acc | val_f1 | val_p | val_r |
 |---------------------------------------|---------|--------|-------|-------|
-|simplified_svm_binary_char_(1, 1)      |0.81     |0.8087  |0.8144 |0.803  |
-|simplified_svm_binary_char_(2, 2)      |0.8635   |0.8629  |0.8668 |0.859  |
-|simplified_svm_binary_char_(3, 3)      |0.8705   |0.8687  |0.8808 |0.857  |
+|simplified_svm_binary_char_(1, 1)      |0.8115   |0.8103  |0.8156 |0.805  |
+|simplified_svm_binary_char_(2, 2)      |0.862    |0.8602  |0.8717 |0.849  |
+|simplified_svm_binary_char_(3, 3)      |0.876    |0.8749  |0.8829 |0.867  |
 |simplified_svm_binary_char_(4, 4)      |0.853    |0.8498  |0.8684 |0.832  |
+|simplified_svm_binary_char_(5, 5)      |0.816    |0.8073  |0.8473 |0.771  |
+|simplified_svm_binary_char_(6, 6)      |0.7905   |0.7655  |0.8691 |0.684  |
 |simplified_svm_binary_char_(1, 3)      |0.8775   |0.8766  |0.8832 |0.87   |
 |simplified_svm_binary_char_(2, 3)      |0.879    |0.8780  |0.8852 |0.871  |
-|simplified_svm_binary_word_(1, 1)      |0.8375   |0.8344  |0.8504 |0.819  |
-|simplified_svm_binary_word_(2, 2)      |0.6565   |0.7374  |0.5967 |0.965  |
-|simplified_svm_binary_word_(3, 3)      |0.54     |0.6849  |0.5208 |1.0    |
+|simplified_svm_binary_word_(1, 1)      |0.8385   |0.8341  |0.8574 |0.812  |
+|simplified_svm_binary_word_(2, 2)      |0.7075   |0.6118  |0.9093 |0.461  |
+|simplified_svm_binary_word_(3, 3)      |0.5515   |0.1882  |0.9905 |0.104  |
+|simplified_svm_binary_word_(4, 4)      |0.515    |0.0582  |1.0    |0.03   |
+|simplified_svm_binary_word_(5, 5)      |0.5035   |0.6682  |0.5018 |1.0    |
+|simplified_svm_binary_word_(6, 6)      |0.5015   |0.6673  | 0.5008|1.0    |
 |simplified_svm_binary_char_(2, 3)_word_(1, 1) |0.877|0.8760|0.8831 |0.869  |
 |simplified_svm_tf_char_(3, 3)          |0.8705   |0.8694  | 0.8769|0.862  |
 |simplified_svm_tf_char_(2, 3)          |0.881    |0.8791  |0.8928 |0.866  |
@@ -223,6 +242,8 @@ python3 train.py
 |simplified_mnb_binary_char_(4, 4)      |0.8835   |0.8855  |0.8705 |0.901  |
 |simplified_mnb_binary_char_(1, 3)      |0.903    |0.9040  |0.8951 |0.913  |
 |simplified_mnb_binary_char_(2, 3)      |0.908    |0.9094  |0.8953 |0.924  |
+|simplified_mnb_binary_char_(2, 3)_0.46 |0.9095   |0.91114 |0.8949 |0.928  |
+|simplified_mnb_binary_char_(2, 3)_0.48 |0.9095   |0.91105 |0.89565|0.927  |
 |simplified_aug_mnb_binary_char_(2, 3)  |0.91     |0.9111  |0.8996 |0.923  |
 |simplified_mnb_binary_word_(1, 1)      |0.878    |0.8790  |0.8720 |0.886  |
 |simplified_mnb_binary_word_(2, 2)      |0.709    |0.6141  |0.9114 |0.463  |
@@ -233,11 +254,11 @@ python3 train.py
 |simplified_mnb_tf_char_(3, 3)          |0.901    |0.9030  |0.8848 |0.922  |
 |simplified_mnb_tf_char_(2, 3)          |0.906    |0.9077  |0.8919 |0.924  |
 |simplified_mnb_tf_word_(1, 1)          |0.8795   |0.8800  |0.8761 |0.884  |
-|simplified_mnb_tf_char_(2, 3)_word_(1, 1) |0.9035 |0.9052  |0.8898 |0.921  |
+|simplified_mnb_tf_char_(2, 3)_word_(1, 1) |0.9035 |0.9052  |0.8898 |0.921 |
 |simplified_mnb_tfidf_char_(3, 3)       |0.8945   |0.8969  |0.8768 |0.918  |
 |simplified_mnb_tfidf_char_(2, 3)       |0.8995   |0.9011  |0.8867 |0.916  |
 |simplified_mnb_tfidf_word_(1, 1)       |0.873    |0.8745  |0.8643 |0.885  |
-|simplified_mnb_tfidf_char_(2, 3)_word_(1, 1)|0.895|0.8970 |0.8805 |0.914   |
+|simplified_mnb_tfidf_char_(2, 3)_word_(1, 1)|0.895|0.8970 |0.8805 |0.914  |
 
 
 
@@ -249,6 +270,7 @@ python3 train.py
 |traditional_svm_binary_char_(2, 2)     |0.8765   |0.8747  |0.8877 |0.862  |
 |traditional_svm_binary_char_(3, 3)     |0.883    |0.8821  |0.8892 |0.875  |
 |traditional_svm_binary_char_(4, 4)     |0.86     |0.8574  |0.8734 |0.842  |
+|traditional_svm_binary_char_(1, 3)     |0.894    |0.8930  |0.9012 |0.885  |
 |traditional_svm_binary_char_(1, 3)     |0.8895   |0.8891  |0.8922 |0.886  |
 |traditional_svm_binary_word_(1, 1)     |0.8435   |0.8412  |0.8538 |0.829  |
 |traditional_svm_binary_word_(2, 2)     |0.657    |0.7380  |0.5970 |0.966  |
@@ -270,6 +292,8 @@ python3 train.py
 |traditional_mnb_binary_char_(4, 4)     |0.891    |0.8930  |0.8767 |0.91   |
 |traditional_aug_mnb_binary_char_(3, 3) |0.9105   |0.9122  |0.8951 |0.93   |
 |traditional_mnb_binary_char_(2, 3)     |0.9225   |0.9234  |0.9130 |0.934  |
+|traditional_mnb_binary_char_(2, 3)_0.46|0.9225   |0.9235  |0.9122 |0.935  |
+|traditional_mnb_binary_char_(2, 3)_0.48|0.9225   |0.9234  |0.9130 |0.934  |
 |traditional_mnb_binary_char_(1, 3)     |0.917    |0.9176  |0.9112 |0.924  |
 |traditional_aug_mnb_binary_char_(2, 3) |0.923    |0.9237  |0.9155 |0.932  |
 |traditional_mnb_binary_word_(1, 1)     |0.8855   |0.8864  |0.8791 |0.894  |
@@ -285,6 +309,8 @@ python3 train.py
 3. binary vectors, tf weighted vectors and tf-idf weighted vectors have very close performace
 4. navie bayers is a very strong classifier on this task
 5. data agumentation doesn't make a difference
+6. skip ngram doeen't help, so does pos ngram
+
 
 ### Performance of dialect matching model
 Not helping.
@@ -293,22 +319,58 @@ Not helping.
 
 - simplified
 
-| ensemble_model                    | ensemble_type | val_acc | val_f1  | val_p  | val_r  |
-|-----------------------------------|---------------|---------|---------|--------|--------|
-|bilstm_word mnb_binary_char_(2, 3) |  mean         | 0.913   | 0.9137  | 0.9065 | 0.921  |
-|bilstm_word mnb_ianry_char_(2, 3)  |  max          | 0.902   | 0.9064  | 0.8675 | 0.949  |
-|bilstm_word mnb_ianry_char_(2, 3)  |  vote         | 0.9     | 0.8996  | 0.9032 | 0.896  |
-|rcnn_word mnb_binary_char_(2, 3)   |  mean         | 0.914   | 0.9145  | 0.9065 | 0.921  |
-|rcnn_word mnb_ianry_char_(2, 3)    |  max          | 0.904   | 0.9080  | 0.8713 | 0.948  |
-|rcnn_word mnb_ianry_char_(2, 3)    |  vote         | 0.904   | 0.9080  | 0.8713 | 0.948  |
+| ensemble_model                        | ensemble_type | val_acc | val_f1  | val_p  | val_r  |
+|---------------------------------------|---------------|---------|---------|--------|--------|
+|bilstm_word mnb_binary_char_(2, 3)     |  mean         | 0.913   | 0.9137  | 0.9065 | 0.921  |
+|bilstm_word mnb_binary_char_(2, 3)_0.46|  mean         | 0.9135  | 0.9148  | 0.9011 | 0.929  |
+|bilstm_word mnb_binary_char_(2, 3)_0.48|  mean         | 0.9135  | 0.9144  | 0.9050 | 0.924  |
+|bilstm_word mnb_bianry_char_(2, 3)     |  max          | 0.913   | 0.9137  | 0.9065 | 0.921  |
+|bilstm_word mnb_binary_char_(2, 3)_0.46|  max          | 0.913   | 0.9137  | 0.9065 | 0.921  |
+|bilstm_word mnb_binary_char_(2, 3)_0.48|  max          | 0.913   | 0.9137  | 0.9065 | 0.921  |
+|bilstm_word mnb_bianry_char_(2, 3)     |  vote         | 0.908   | 0.9094  | 0.8953 | 0.924  |
+|bilstm_word mnb_binary_char_(2, 3)_0.4 |  xgboost      | 0.9105  | 0.9114  | 0.9020 | 0.921  |
+|bilstm_word mnb_binary_char_(2, 3)_0.4 |  svm          | 0.9065  | 0.9067  | 0.9044 | 0.909  |
+|bilstm_word mnb_binary_char_(2, 3)_0.4 |  lda          | 0.906   | 0.9061  | 0.9044 | 0.908  |
+|bilstm_word mnb_binary_char_(2, 3)     |  xgboost      | 0.9075  | 0.9076  | 0.9062 | 0.909  |
+|bilstm_word mnb_binary_char_(2, 3)     |  svm          | 0.9065  | 0.9067  | 0.9044 | 0.909  |
+|bilstm_word mnb_binary_char_(2, 3)     |  lda          | 0.9055  | 0.9056  | 0.9043 | 0.907  |
+|svm_lr_mnb_binary_char_(2, 3)          |  gnb          | 0.8915  | 0.8910  | 0.8951 | 0.887  |
+|svm_lr_mnb_binary_char_(2, 3)          |  mnb          | 0.903   | 0.9063  | 0.8759 | 0.939  |
+|svm_lr_mnb_binary_char_(2, 3)_0.52     |  mnb          | 0.905   | 0.9079  | 0.8842 | 0.932  |
+|svm_lr_mnb_binary_char_(2, 3)_0.56     |  mnb          | 0.907   | 0.907   | 0.907  | 0.907  |
+|svm_lr_mnb_binary_char_(2, 3)          |  mean         | 0.9025  | 0.9029  | 0.8989 | 0.907  |
+|svm_lr_mnb_binary_char_(2, 3)          |  max          | 0.908   | 0.9089  | 0.9    | 0.918  |
+|svm_lr_mnb_binary_char_(2, 3)          |  vote         | 0.888   | 0.8869  | 0.8959 | 0.878  |
+|svm_lr_mnb_binary_char_(2, 3)_0.4      |  max          | 0.91    | 0.9111  | 0.9003 | 0.922  |
+|all_dl_model                           |  gnb          | 0.9005  | 0.9017  | 0.8907 | 0.913  |
+|all_dl_model_0.56                      |  lr           | 0.9015  | 0.9010  | 0.9060 | 0.896  |
+|all_dl_model                           |  mean         | 0.905   | 0.9046  | 0.9083 | 0.901  |
+|all_dl_model                           |  max          | 0.9015  | 0.9010  | 0.9060 | 0.896  |
+|all_dl_model                           |  vote         | 0.906   | 0.9057  | 0.9085 | 0.903  |
 
 - traditional
 
-| ensemble_model                    | ensemble_type | val_acc | val_f1  | val_p  | val_r  |
-|-----------------------------------|---------------|---------|---------|--------|--------|
-|bilstm_word mnb_binary_char_(2, 3) |  mean         | 0.924   | 0.9242  | 0.9223 | 0.926  |
-|bilstm_word mnb_ianry_char_(2, 3)  |  max          | 0.9185  | 0.9209  | 0.8944 | 0.949  |
-|bilstm_word mnb_ianry_char_(2, 3)  |  vote         | 0.9115  | 0.9097  | 0.9282 | 0.892  |
-|rcnn_word mnb_binary_char_(2, 3)   |  mean         | 0.923   | 0.9233  | 0.9196 | 0.927  |
-|rcnn_word mnb_ianry_char_(2, 3)    |  max          | 0.9165  | 0.9194  | 0.8888 | 0.952  |
-|rcnn_word mnb_ianry_char_(2, 3)    |  vote         | 0.9165  | 0.9194  | 0.8889 | 0.952  |
+| ensemble_model                         | ensemble_type | val_acc | val_f1  | val_p  | val_r  |
+|----------------------------------------|---------------|---------|---------|--------|--------|
+|bilstm_word mnb_binary_char_(2, 3)      |  mean         | 0.924   | 0.9242  | 0.9223 | 0.926  |
+|bilstm_word mnb_binary_char_(2, 3)_0.46 |  mean         | 0.925   | 0.9257  | 0.9166 | 0.935  |
+|bilstm_word mnb_binary_char_(2, 3)_0.48 |  mean         | 0.926   | 0.9264  | 0.9218 | 0.931  |
+|bilstm_word mnb_bianry_char_(2, 3)      |  max          | 0.924   | 0.9242  | 0.9223 | 0.926  |
+|bilstm_word mnb_binary_char_(2, 3)_0.46 |  max          | 0.924   | 0.9242  | 0.9223 | 0.926  |
+|bilstm_word mnb_binary_char_(2, 3)_0.48 |  max          | 0.924   | 0.9242  | 0.9223 | 0.926  |
+|bilstm_word mnb_bianry_char_(2, 3)      |  vote         | 0.9225  | 0.9234  | 0.9130 | 0.934  |
+|bilstm_word mnb_binary_char_(2, 3)_0.46 |  vote         | 0.924   | 0.9242  | 0.9223 | 0.926  |
+|bilstm_word mnb_binary_char_(2, 3)_0.48 |  vote         | 0.924   | 0.9242  | 0.9223 | 0.926  |
+|bilstm_word mnb_binary_char_(2, 3)      |  gnb          | 0.9215  | 0.9216  | 0.9202 | 0.923  |
+|svm_lr_mnb_binary_char_(2, 3)           |  mean         | 0.917   | 0.9171  | 0.9162 | 0.918  |
+|svm_lr_mnb_binary_char_(2, 3)           |  max          | 0.9225  | 0.9231  | 0.9162 | 0.93   |
+|svm_lr_mnb_binary_char_(2, 3)_0.4       |  max          | 0.924   | 0.9247  | 0.9165 | 0.933  |
+|svm_lr_mnb_binary_char_(2, 3)           |  vote         | 0.8985  | 0.8976  | 0.9054 | 0.89   |
+|svm_lr_mnb_binary_char_(2, 3)           |  gnb          | 0.906   | 0.906   | 0.906  | 0.906  |
+|svm_lr_mnb_binary_char_(2, 3)           |  mnb          | 0.918   | 0.9205  | 0.8936 | 0.949  |
+|svm_lr_mnb_binary_char_(2, 3)_0.54      |  mnb          | 0.92    | 0.9209  | 0.9101 | 0.932  |
+|svm_lr_mnb_binary_char_(2, 3)_0.56      |  mnb          | 0.922   | 0.9221  | 0.9212 | 0.923  |
+|all_dl_model                            |  gnb          | 0.9155  | 0.9161  | 0.9094 | 0.923  |
+|all_dl_model                            |  mean         | 0.9215  | 0.9207  | 0.9297 | 0.912  |
+|all_dl_model                            |  max          | 0.91    | 0.9090  | 0.9192 | 0.899  |
+|all_dl_model                            |  vote         | 0.9195  | 0.9185  | 0.9303 | 0.907  |

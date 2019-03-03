@@ -1,0 +1,221 @@
+\begin{thebibliography}{26}
+\expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
+
+\bibitem[{Bahdanau et~al.(2014)Bahdanau, Cho, and
+  Bengio}]{DBLP:journals/corr/BahdanauCB14}
+Dzmitry Bahdanau, Kyunghyun Cho, and Yoshua Bengio. 2014.
+\newblock \href {http://arxiv.org/abs/1409.0473} {Neural machine translation by
+  jointly learning to align and translate}.
+\newblock \emph{CoRR}, abs/1409.0473.
+
+\bibitem[{Bojanowski et~al.(2017)Bojanowski, Grave, Joulin, and
+  Mikolov}]{bojanowski2017enriching}
+Piotr Bojanowski, Edouard Grave, Armand Joulin, and Tomas Mikolov. 2017.
+\newblock Enriching word vectors with subword information.
+\newblock \emph{Transactions of the Association for Computational Linguistics},
+  5:135--146.
+
+\bibitem[{Chen et~al.(2017{\natexlab{a}})Chen, Sun, Bing, and Yang}]{D17-1047}
+Peng Chen, Zhongqian Sun, Lidong Bing, and Wei Yang. 2017{\natexlab{a}}.
+\newblock \href {https://doi.org/10.18653/v1/D17-1047} {Recurrent attention
+  network on memory for aspect sentiment analysis}.
+\newblock In \emph{Proceedings of the 2017 Conference on Empirical Methods in
+  Natural Language Processing}, pages 452--461. Association for Computational
+  Linguistics.
+
+\bibitem[{Chen et~al.(2017{\natexlab{b}})Chen, Zhu, Ling, Wei, Jiang, and
+  Inkpen}]{ACLP17-1152}
+Qian Chen, Xiaodan Zhu, Zhen-Hua Ling, Si~Wei, Hui Jiang, and Diana Inkpen.
+  2017{\natexlab{b}}.
+\newblock \href {https://doi.org/10.18653/v1/P17-1152} {Enhanced lstm for
+  natural language inference}.
+\newblock In \emph{Proceedings of the 55th Annual Meeting of the Association
+  for Computational Linguistics (Volume 1: Long Papers)}, pages 1657--1668.
+  Association for Computational Linguistics.
+
+\bibitem[{Ciobanu and Dinu(2016)}]{Ciobanu2016ACP}
+Alina~Maria Ciobanu and Liviu~P. Dinu. 2016.
+\newblock \href
+  {http://www.lrec-conf.org/proceedings/lrec2016/pdf/1140_Paper.pdf} {A
+  computational perspective on the romanian dialects}.
+\newblock In \emph{Proceedings of Language Resources and Evaluation (LREC)}.
+
+\bibitem[{Clematide and Makarov(2017)}]{W17-1221}
+Simon Clematide and Peter Makarov. 2017.
+\newblock \href {https://doi.org/10.18653/v1/W17-1221} {Cluzh at vardial gdi
+  2017: Testing a variety of machine learning tools for the classification of
+  swiss german dialects}.
+\newblock In \emph{Proceedings of the Fourth Workshop on NLP for Similar
+  Languages, Varieties and Dialects (VarDial)}, pages 170--177. Association for
+  Computational Linguistics.
+
+\bibitem[{{\c{C}}{\"o}ltekin et~al.(2018){\c{C}}{\"o}ltekin, Rama, and
+  Blaschke}]{W18-3906}
+{\c{C}}a{\u{g}}r{\i} {\c{C}}{\"o}ltekin, Taraka Rama, and Verena Blaschke.
+  2018.
+\newblock \href {http://aclweb.org/anthology/W18-3906} {T{\"u}bingen-oslo team
+  at the vardial 2018 evaluation campaign: An analysis of n-gram features in
+  language variety identification}.
+\newblock In \emph{Proceedings of the Fifth Workshop on NLP for Similar
+  Languages, Varieties and Dialects (VarDial 2018)}, pages 55--65. Association
+  for Computational Linguistics.
+
+\bibitem[{Feng et~al.(2015)Feng, Xiang, Glass, Wang, and
+  Zhou}]{DBLP:journals/corr/FengXGWZ15}
+Minwei Feng, Bing Xiang, Michael~R. Glass, Lidan Wang, and Bowen Zhou. 2015.
+\newblock \href {http://arxiv.org/abs/1508.01585} {Applying deep learning to
+  answer selection: {A} study and an open task}.
+\newblock \emph{CoRR}, abs/1508.01585.
+
+\bibitem[{Huang and Lee(2008)}]{Y08-1042}
+Chu-Ren Huang and Lung-Hao Lee. 2008.
+\newblock \href {http://aclweb.org/anthology/Y08-1042} {Contrastive approach
+  towards text source classification based on top-bag-of-word similarity}.
+\newblock In \emph{Proceedings of the 22nd Pacific Asia Conference on Language,
+  Information and Computation}.
+
+\bibitem[{Johnson and Zhang(2017)}]{P17-1052}
+Rie Johnson and Tong Zhang. 2017.
+\newblock \href {https://doi.org/10.18653/v1/P17-1052} {Deep pyramid
+  convolutional neural networks for text categorization}.
+\newblock In \emph{Proceedings of the 55th Annual Meeting of the Association
+  for Computational Linguistics (Volume 1: Long Papers)}, pages 562--570.
+  Association for Computational Linguistics.
+
+\bibitem[{Kalchbrenner et~al.(2014)Kalchbrenner, Grefenstette, and
+  Blunsom}]{P14-1062}
+Nal Kalchbrenner, Edward Grefenstette, and Phil Blunsom. 2014.
+\newblock \href {https://doi.org/10.3115/v1/P14-1062} {A convolutional neural
+  network for modelling sentences}.
+\newblock In \emph{Proceedings of the 52nd Annual Meeting of the Association
+  for Computational Linguistics (Volume 1: Long Papers)}, pages 655--665.
+  Association for Computational Linguistics.
+
+\bibitem[{Kim(2014)}]{D14-1181}
+Yoon Kim. 2014.
+\newblock \href {https://doi.org/10.3115/v1/D14-1181} {Convolutional neural
+  networks for sentence classification}.
+\newblock In \emph{Proceedings of the 2014 Conference on Empirical Methods in
+  Natural Language Processing (EMNLP)}, pages 1746--1751. Association for
+  Computational Linguistics.
+
+\bibitem[{Kingma and Ba(2014)}]{DBLP:journals/corr/KingmaB14}
+Diederik~P. Kingma and Jimmy Ba. 2014.
+\newblock \href {http://arxiv.org/abs/1412.6980} {Adam: {A} method for
+  stochastic optimization}.
+\newblock \emph{CoRR}, abs/1412.6980.
+
+\bibitem[{Kreutz and Daelemans(2018)}]{W18-3922}
+Tim Kreutz and Walter Daelemans. 2018.
+\newblock \href {http://aclweb.org/anthology/W18-3922} {Exploring classifier
+  combinations for language variety identification}.
+\newblock In \emph{Proceedings of the Fifth Workshop on NLP for Similar
+  Languages, Varieties and Dialects (VarDial 2018)}, pages 191--198.
+  Association for Computational Linguistics.
+
+\bibitem[{Lin et~al.(2017)Lin, Feng, dos Santos, Yu, Xiang, Zhou, and
+  Bengio}]{DBLP:journals/corr/LinFSYXZB17}
+Zhouhan Lin, Minwei Feng, C{\'{\i}}cero~Nogueira dos Santos, Mo~Yu, Bing Xiang,
+  Bowen Zhou, and Yoshua Bengio. 2017.
+\newblock \href {http://arxiv.org/abs/1703.03130} {A structured self-attentive
+  sentence embedding}.
+\newblock \emph{CoRR}, abs/1703.03130.
+
+\bibitem[{Lui and Cook(2013)}]{U13-1003}
+Marco Lui and Paul Cook. 2013.
+\newblock \href {http://aclweb.org/anthology/U13-1003} {Classifying english
+  documents by national dialect}.
+\newblock In \emph{Proceedings of the Australasian Language Technology
+  Association Workshop 2013 (ALTA 2013)}, pages 5--15.
+
+\bibitem[{Malmasi et~al.(2016)Malmasi, Zampieri, Ljube{\v{s}}i{\'{c}}, Nakov,
+  Ali, and Tiedemann}]{W16-4801}
+Shervin Malmasi, Marcos Zampieri, Nikola Ljube{\v{s}}i{\'{c}}, Preslav Nakov,
+  Ahmed Ali, and J{\"o}rg Tiedemann. 2016.
+\newblock \href {http://aclweb.org/anthology/W16-4801} {Discriminating between
+  similar languages and arabic dialect identification: A report on the third
+  dsl shared task}.
+\newblock In \emph{Proceedings of the Third Workshop on NLP for Similar
+  Languages, Varieties and Dialects (VarDial3)}, pages 1--14. The COLING 2016
+  Organizing Committee.
+
+\bibitem[{Mikolov et~al.(2013)Mikolov, Chen, Corrado, and
+  Dean}]{DBLP:journals/corr/abs-1301-3781}
+Tomas Mikolov, Kai Chen, Greg Corrado, and Jeffrey Dean. 2013.
+\newblock \href {http://arxiv.org/abs/1301.3781} {Efficient estimation of word
+  representations in vector space}.
+\newblock \emph{CoRR}, abs/1301.3781.
+
+\bibitem[{Pennington et~al.(2014)Pennington, Socher, and
+  Manning}]{pennington2014glove}
+Jeffrey Pennington, Richard Socher, and Christopher~D. Manning. 2014.
+\newblock \href {http://www.aclweb.org/anthology/D14-1162} {Glove: Global
+  vectors for word representation}.
+\newblock In \emph{Empirical Methods in Natural Language Processing (EMNLP)},
+  pages 1532--1543.
+
+\bibitem[{Vaswani et~al.(2017{\natexlab{a}})Vaswani, Shazeer, Parmar,
+  Uszkoreit, Jones, Gomez, Kaiser, and Polosukhin}]{NIPS2017_7181}
+Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones,
+  Aidan~N Gomez, \L~ukasz Kaiser, and Illia Polosukhin. 2017{\natexlab{a}}.
+\newblock \href
+  {http://papers.nips.cc/paper/7181-attention-is-all-you-need.pdf} {Attention
+  is all you need}.
+\newblock In I.~Guyon, U.~V. Luxburg, S.~Bengio, H.~Wallach, R.~Fergus,
+  S.~Vishwanathan, and R.~Garnett, editors, \emph{Advances in Neural
+  Information Processing Systems 30}, pages 5998--6008. Curran Associates, Inc.
+
+\bibitem[{Vaswani et~al.(2017{\natexlab{b}})Vaswani, Shazeer, Parmar,
+  Uszkoreit, Jones, Gomez, Kaiser, and
+  Polosukhin}]{DBLP:journals/corr/VaswaniSPUJGKP17}
+Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones,
+  Aidan~N. Gomez, Lukasz Kaiser, and Illia Polosukhin. 2017{\natexlab{b}}.
+\newblock \href {http://arxiv.org/abs/1706.03762} {Attention is all you need}.
+\newblock \emph{CoRR}, abs/1706.03762.
+
+\bibitem[{Xu et~al.(2016)Xu, Wang, and Li}]{IJNLC2016:5}
+Fan Xu, Mingwen Wang, and Maoxi Li. 2016.
+\newblock \href {https://doi.org/10.5121/ijnlc.2016.5602} {Sentence-level
+  dialects identification in the greater china region}.
+\newblock \emph{International Journal on Natural Language Computing (IJNLC)},
+  5(6).
+
+\bibitem[{Zampieri and Gebre(2012)}]{Zampieri2012AutomaticIO}
+Marcos Zampieri and Binyam~Gebrekidan Gebre. 2012.
+\newblock \href {http://uni-koeln.de/~mzampie2/papers/konvens.pdf} {Automatic
+  identification of language varieties: The case of portuguese}.
+\newblock In \emph{Proceedings of KONVENS}.
+
+\bibitem[{Zampieri et~al.(2017)Zampieri, Malmasi, Ljube{\v{s}}i{\'{c}}, Nakov,
+  Ali, Tiedemann, Scherrer, and Aepli}]{W17-1201}
+Marcos Zampieri, Shervin Malmasi, Nikola Ljube{\v{s}}i{\'{c}}, Preslav Nakov,
+  Ahmed Ali, J{\"o}rg Tiedemann, Yves Scherrer, and No{\"e}mi Aepli. 2017.
+\newblock \href {https://doi.org/10.18653/v1/W17-1201} {Findings of the vardial
+  evaluation campaign 2017}.
+\newblock In \emph{Proceedings of the Fourth Workshop on NLP for Similar
+  Languages, Varieties and Dialects (VarDial)}, pages 1--15. Association for
+  Computational Linguistics.
+
+\bibitem[{Zampieri et~al.(2018)Zampieri, Malmasi, Nakov, Ali, Shon, Glass,
+  Scherrer, Samard{\v{z}}i{\'{c}}, Ljube{\v{s}}i{\'{c}}, Tiedemann, van~der
+  Lee, Grondelaers, Oostdijk, Speelman, van~den Bosch, Kumar, Lahiri, and
+  Jain}]{W18-3901}
+Marcos Zampieri, Shervin Malmasi, Preslav Nakov, Ahmed Ali, Suwon Shon, James
+  Glass, Yves Scherrer, Tanja Samard{\v{z}}i{\'{c}}, Nikola
+  Ljube{\v{s}}i{\'{c}}, J{\"o}rg Tiedemann, Chris van~der Lee, Stefan
+  Grondelaers, Nelleke Oostdijk, Dirk Speelman, Antal van~den Bosch, Ritesh
+  Kumar, Bornini Lahiri, and Mayank Jain. 2018.
+\newblock \href {http://aclweb.org/anthology/W18-3901} {Language identification
+  and morphosyntactic tagging: The second vardial evaluation campaign}.
+\newblock In \emph{Proceedings of the Fifth Workshop on NLP for Similar
+  Languages, Varieties and Dialects (VarDial 2018)}, pages 1--17. Association
+  for Computational Linguistics.
+
+\bibitem[{Zhou et~al.(2015)Zhou, Sun, Liu, and
+  Lau}]{DBLP:journals/corr/ZhouSLL15b}
+Chunting Zhou, Chonglin Sun, Zhiyuan Liu, and Francis C.~M. Lau. 2015.
+\newblock \href {http://arxiv.org/abs/1511.08630} {A {C-LSTM} neural network
+  for text classification}.
+\newblock \emph{CoRR}, abs/1511.08630.
+
+\end{thebibliography}

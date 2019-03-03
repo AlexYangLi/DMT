@@ -1,32 +1,37 @@
 
 ### method
 
-- 孪生结构和dialect matching (不行)
+- 分析一下错误的地方（没用）
 
-- 数据增强（不明显）
-
-- 分析一下错误的地方
-
-- 不同的embedding
+- 不同的embedding （尝试了， 没用）
 
 - 加其他的特征：PMI，出没出现特定词
 
-- 调参：网格搜索+交叉验证
-
 - 再多点尝试word-ngram的结合，还有char和word的结合，方便写论文
 
-- 再尝试集成模型：
+- 调参：网格搜索+交叉验证
 
-linear SVM
+- 再尝试集成模型：ensemble做得精细一点，详细说说大概尝试了什么方法
+
+- 可以调一下阈值，有一点点提升
+
+- 特征: pos-ngram, 改一下confidence vote，试一下meta-classifier，尝试怎么找出重要的特征？学会使用CalibratedClassifierCV，Pineline
+
 
 
 ### paper
 
-集成那篇可以参考一些写作
+Hybrid Bayes-BiLSTm ensembles for .....
+
+集成那篇可以参考一些写作(Classifier Ensembles for Dialect and Language Variety Identification)
+有些话也可以参考(Exploring classifier combinations for Language variety identificaion)
 
 - Introduction: 先说语言识别，再说方言识别论文可以说现在没什么人研究中国方言的区别，难点，应用场景，可以简单介绍这个vardial任务。之后再简单介绍我们做的东西
+
 To the best of our knowledge,
 methods to discriminate between these two languages haven’t been substantially investigated
+
+可以说现在主流的方法都是基于n-gram的SVM，其他的模型还有神经网络的模型没有尝试
 
 - Related work:
 
@@ -37,11 +42,21 @@ shorter ones) to 250 characters and 100 tokens for the RNN models. the gap is
 particularly large
  2. model
 
+ 可以做一个表格说明一下为什么选n-gram的有效程度，一些词的区别，同时在训练集上的频数
+
 
 - results: confusion matrix(可以加)
 首先是n-gram的比较图，分3个图来讲解，之后就是combination（用表格来呈现）
 
 可以说虽然大家都说svm好，但是贝叶斯更好
+
+For further tests, we left out the function word n-grams because we
+expect them to harm performance in any configuration.
+
+The content features (word n-grams) perform the best, but this is closely followed by the syntactic
+features (PoS n-grams).
+
+要学会解释，不只是阐述现象
 
 - conclusion and future work
 

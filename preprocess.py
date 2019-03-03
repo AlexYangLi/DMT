@@ -26,7 +26,7 @@ from keras.utils import to_categorical
 from config import SIMP_TRAIN_FILENAME, SIMP_DEV_FILENAME, TRAD_TRAIN_FILENAME, TRAD_DEV_FILENAME, TRAIN_DATA_TEMPLATE, \
     DEV_DATA_TEMPLATE, TRAIN_IDS_MATRIX_TEMPLATE, DEV_IDS_MATRIX_TEMPLATE, EMBEDDING_MATRIX_TEMPLATE, \
     TOKENIZER_TEMPLATE, VOCABULARY_TEMPLATE, ANALYSIS_LOG_TEMPLATE
-from config import PROCESSED_DATA_DIR, LOG_DIR, MODEL_SAVED_DIR
+from config import PROCESSED_DATA_DIR, LOG_DIR, MODEL_SAVED_DIR, IMG_DIR
 from config import LABELS, VARIATIONS
 from config import ModelConfig
 from utils.data_loader import read_raw_data
@@ -101,12 +101,16 @@ def create_data_matrices(tokenizer, data, n_class, one_hot, max_len=None):
 
 def process_data():
     config = ModelConfig()
+
+    # create dir
     if not path.exists(PROCESSED_DATA_DIR):
         os.makedirs(PROCESSED_DATA_DIR)
     if not path.exists(LOG_DIR):
         os.makedirs(LOG_DIR)
     if not path.exists(MODEL_SAVED_DIR):
         os.makedirs(MODEL_SAVED_DIR)
+    if not path.exists(IMG_DIR):
+        os.makedirs(IMG_DIR)
 
     # load datasets
     data_train, data_dev = load_data()
@@ -136,6 +140,7 @@ def process_data():
             dict(('dev_cls_{}'.format(cls), percent) for cls, percent in dev_label_distribution.items()))
 
         # create tokenizer and vocabulary
+
         sentences_train = variation_train_data['sentence']
         sentences_dev = variation_dev_data['sentence']
 

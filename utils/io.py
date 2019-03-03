@@ -16,6 +16,7 @@
 
 from os import path
 import json
+import codecs
 import numpy as np
 import pickle
 
@@ -48,7 +49,7 @@ def pickle_dump(filename, obj):
 
 
 def write_log(filename, log, mode='w'):
-    with open(filename, mode) as writer:
+    with codecs.open(filename, mode, encoding='utf8') as writer:
         writer.write('\n')
-        json.dump(log, writer, indent=4, default=str)
+        json.dump(log, writer, indent=4, default=str, ensure_ascii=False)
     print('Logging Info - log saved in', filename)
