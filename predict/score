@@ -1,0 +1,65 @@
+Submission file: /tmp/codalab/tmpXQGz7g/run/input/res/simplified_bilstm_word_w2v_data_tune.labels
+Submission contains 2000 lines.
+Submission Results:
+	Accuracy: 0.812000
+	F1-micro: 0.812000
+	F1-macro: 0.811795
+	F1-weighted: 0.811795
+
+
+Submission file: /tmp/codalab/tmpXQGz7g/run/input/res/simplified_bilstm_word_w2v_data_tune.labels
+Submission contains 2000 lines.
+Submission Results:
+	Accuracy: 0.812000
+	F1-micro: 0.812000
+	F1-macro: 0.811795
+	F1-weighted: 0.811795
+
+Submission file: /tmp/codalab/tmpfBA_5W/run/input/res/simplified_mnb_binary_char_(2, 3).labels
+Submission contains 2000 lines.
+Submission Results:
+	Accuracy: 0.850500
+	F1-micro: 0.850500
+	F1-macro: 0.849895
+	F1-weighted: 0.849895
+
+
+Submission file: /tmp/codalab/tmps6hJ5M/run/input/res/simplified_bilstm_mnb_mean_ensemble.labels
+Submission contains 2000 lines.
+Submission Results:
+	Accuracy: 0.853500
+	F1-micro: 0.853500
+	F1-macro: 0.853031
+	F1-weighted: 0.853031
+
+
+
+
+
+Submission file: /tmp/codalab/tmpYrhVou/run/input/res/traditional_bilstm_word_w2v_data_tune.labels
+Submission contains 2000 lines.
+Submission Results:
+	Accuracy: 0.845000
+	F1-micro: 0.845000
+	F1-macro: 0.844965
+	F1-weighted: 0.844965
+
+
+Submission file: /tmp/codalab/tmpfeUrw4/run/input/res/traditional_mnb_binary_char_(2, 3).labels
+Submission contains 2000 lines.
+Submission Results:
+	Accuracy: 0.865500
+	F1-micro: 0.865500
+	F1-macro: 0.865022
+	F1-weighted: 0.865022
+
+
+Submission file: /tmp/codalab/tmp8h47yj/run/input/res/traditional_bilstm_mnb_mean_ensemble.labels
+Submission contains 2000 lines.
+Submission Results:
+	Accuracy: 0.869000
+	F1-micro: 0.869000
+	F1-macro: 0.868710
+	F1-weighted: 0.868710
+
+

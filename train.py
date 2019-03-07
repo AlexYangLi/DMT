@@ -21,7 +21,7 @@ import numpy as np
 from keras import optimizers
 
 from config import ModelConfig, LOG_DIR, PERFORMANCE_LOG_TEMPLATE, PROCESSED_DATA_DIR, EMBEDDING_MATRIX_TEMPLATE, \
-    TRAIN_NGRAM_DATA_TEMPLATE, DEV_NGRAM_DATA_TEMPLATE, VARIATIONS
+    VARIATIONS, PREDICT_DIR
 from models.keras_bilstm_model import BiLSTM
 from models.keras_cnnrnn_model import CNNRNN
 from models.keras_dcnn_model import DCNN
@@ -37,9 +37,9 @@ from models.sklearn_base_model import SVMModel, LRModel, SGDModel, GaussianNBMod
 from models.keras_dialect_match_model import DialectMatchModel
 
 from utils.data_loader import load_processed_data, load_ngram_data, load_processed_text_data
-from utils.io import format_filename, write_log
+from utils.io import format_filename, write_log, writer_predict
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '1'
+os.environ['CUDA_VISIBLE_DEVICES'] = '2'
 
 
 def get_optimizer(op_type, learning_rate):
@@ -60,7 +60,7 @@ def get_optimizer(op_type, learning_rate):
 # train deep learning based model
 def train_dl_model(variation, input_level, word_embed_type, word_embed_trainable, batch_size, learning_rate,
                    optimizer_type, model_name, binary_threshold=0.5, checkpoint_dir=None, overwrite=False,
-                   log_error=False, **kwargs):
+                   log_error=False, save_log=True, **kwargs):
     config = ModelConfig()
     config.variation = variation
     config.input_level = input_level
@@ -110,6 +110,7 @@ def train_dl_model(variation, input_level, word_embed_type, word_embed_trainable
 
     train_input = load_processed_data(variation, input_level, 'train')
     dev_input = load_processed_data(variation, input_level, 'dev')
+    test_input = load_processed_data(variation, input_level, 'test')
 
     model_save_path = path.join(config.checkpoint_dir, '{}.hdf5'.format(config.exp_name))
     if not path.exists(model_save_path) or overwrite:
@@ -123,9 +124,12 @@ def train_dl_model(variation, input_level, word_embed_type, word_embed_trainable
     model.load_best_model()
 
     print('Logging Info - Evaluate over valid data:')
-    valid_acc, valid_f1 = model.evaluate(dev_input)
+    valid_acc, valid_f1, valid_macro_f1, valid_p, valid_r = model.evaluate(dev_input)
     train_log['valid_acc'] = valid_acc
     train_log['valid_f1'] = valid_f1
+    train_log['valid_macro_f1'] = valid_macro_f1
+    train_log['valid_p'] = valid_p
+    train_log['valid_r'] = valid_r
     train_log['time_stamp'] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
     if log_error:
@@ -136,14 +140,19 @@ def train_dl_model(variation, input_level, word_embed_type, word_embed_trainable
                                                                        dev_text_input['sentence'][error_index],
                                                                        dev_text_input['label'][error_index],
                                                                        error_pred_prob)
+    if save_log:
+        write_log(format_filename(LOG_DIR, PERFORMANCE_LOG_TEMPLATE, variation=variation), log=train_log, mode='a')
 
-    write_log(format_filename(LOG_DIR, PERFORMANCE_LOG_TEMPLATE, variation=variation), log=train_log, mode='a')
-    return valid_acc, valid_f1
+    if test_input is not None:
+        test_predictions = model.predict(test_input)
+        writer_predict(format_filename(PREDICT_DIR, config.exp_name+'.labels'), test_predictions)
+
+    return valid_acc, valid_f1, valid_macro_f1, valid_p, valid_r
 
 
 # train machine learning based model
 def train_ml_model(model_name, variation, vectorizer_type, level, ngram_range, binary_threshold=0.5,
-                   checkpoint_dir=None, overwrite=False, log_error=False, **kwargs):
+                   checkpoint_dir=None, overwrite=False, log_error=False, save_log=True, **kwargs):
     config = ModelConfig()
     config.binary_threshold = binary_threshold
     if checkpoint_dir is not None:
@@ -176,6 +185,7 @@ def train_ml_model(model_name, variation, vectorizer_type, level, ngram_range, b
 
     train_input = load_ngram_data(variation, vectorizer_type, level, ngram_range, 'train')
     dev_input = load_ngram_data(variation, vectorizer_type, level, ngram_range, 'dev')
+    test_input = load_ngram_data(variation, vectorizer_type, level, ngram_range, 'test')
 
     model_save_path = path.join(config.checkpoint_dir, '{}.hdf5'.format(config.exp_name))
     if not path.exists(model_save_path) or overwrite:
@@ -183,9 +193,10 @@ def train_ml_model(model_name, variation, vectorizer_type, level, ngram_range, b
 
     model.load_best_model()
     print('Logging Info - Evaluate over valid data:')
-    valid_acc, valid_f1, valid_p, valid_r = model.evaluate(dev_input)
+    valid_acc, valid_f1, valid_macro_f1, valid_p, valid_r = model.evaluate(dev_input)
     train_log['valid_acc'] = valid_acc
     train_log['valid_f1'] = valid_f1
+    train_log['valid_macro_f1'] = valid_macro_f1
     train_log['valid_p'] = valid_p
     train_log['valid_r'] = valid_r
     train_log['time_stamp'] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
@@ -198,8 +209,12 @@ def train_ml_model(model_name, variation, vectorizer_type, level, ngram_range, b
                                                                        dev_text_input['sentence'][error_index],
                                                                        dev_text_input['label'][error_index],
                                                                        error_pred_prob)
+    if save_log:
+        write_log(format_filename(LOG_DIR, PERFORMANCE_LOG_TEMPLATE, variation=variation), log=train_log, mode='a')
 
-    write_log(format_filename(LOG_DIR, PERFORMANCE_LOG_TEMPLATE, variation=variation), log=train_log, mode='a')
+    if test_input is not None:
+        test_predictions = model.predict(test_input)
+        writer_predict(format_filename(PREDICT_DIR, config.exp_name+'.labels'), test_predictions)
     return valid_acc, valid_f1, valid_p, valid_r
 
 
@@ -258,11 +273,11 @@ def train_match_model(variation, input_level, word_embed_type, word_embed_traina
 
 if __name__ == '__main__':
     # train dl model
-    # for variation in VARIATIONS:
-    #         for word_embed_type in ['w2v_data']:
-    #             for model_name in ['bilstm']:
-    #                 for binary_threshold in np.arange(0.4, 0.62, 0.02):
-    #                     train_dl_model(variation, 'word', word_embed_type, True, 64, 0.01, 'adam', model_name, binary_threshold=binary_threshold)
+    for variation in VARIATIONS:
+            for word_embed_type in ['w2v_data']:
+                for model_name in ['bilstm']:
+                    for binary_threshold in [0.5]:
+                        train_dl_model(variation, 'word', word_embed_type, True, 64, 0.01, 'adam', model_name, binary_threshold=binary_threshold)
 
     # train ml model with skip ngram input
     # for variation in VARIATIONS:
@@ -283,23 +298,20 @@ if __name__ == '__main__':
 
     # train ml model with ngram input
     for variation in VARIATIONS:
-        for model_name in ['svm', 'lr', 'mnb']:
+        for model_name in ['mnb']:
                 for vectorizer_type in ['binary']:
-                    # train_ml_model(model_name, variation, vectorizer_type, 'char', (1, 1), overwrite=True)
-                    # train_ml_model(model_name, variation, vectorizer_type, 'char', (2, 2), overwrite=True)
-                    # train_ml_model(model_name, variation, vectorizer_type, 'char', (3, 3), overwrite=True)
-                    # # train_ml_model(model_name, variation, vectorizer_type, 'char', (4, 4), overwrite=True)
-                    train_ml_model(model_name, variation, vectorizer_type, 'char', (1, 3), overwrite=True)
-                    train_ml_model(model_name, variation, vectorizer_type, 'char', (2, 3), overwrite=True)
-                    #
-                    # train_ml_model(model_name, variation, vectorizer_type, 'word', (1, 1), overwrite=True)
-                    # train_ml_model(model_name, variation, vectorizer_type, 'word', (2, 2), overwrite=True)
-                    # train_ml_model(model_name, variation, vectorizer_type, 'word', (3, 3), overwrite=True)
-                    # # train_ml_model(model_name, variation, vectorizer_type, 'word', (4, 4), overwrite=True)
-                    # train_ml_model(model_name, variation, vectorizer_type, 'word', (1, 3), overwrite=True)
-                    # train_ml_model(model_name, variation, vectorizer_type, 'word', (2, 3), overwrite=True)
-                    #
-                    train_ml_model(model_name, variation, vectorizer_type, ['char', 'word'], [(2, 3), (1, 1)], overwrite=True)
+                    # for level in ['word', 'char']:
+                    #     for n_gram in range(1, 9, 1):
+                    #         train_ml_model(model_name, variation, vectorizer_type, level, (n_gram, n_gram))
+
+                    # train_ml_model(model_name, variation, vectorizer_type, 'char', (1, 3))
+                    train_ml_model(model_name, variation, vectorizer_type, 'char', (2, 3))
+                    # train_ml_model(model_name, variation, vectorizer_type, ['char', 'word'], [(2, 3), (1, 1)])
+                    # train_ml_model(model_name, variation, vectorizer_type, ['char', 'char'], [(2, 3), (4, 4)])
+                    # train_ml_model(model_name, variation, vectorizer_type, ['char', 'char'], [(1, 3), (4, 4)])
+                    # train_ml_model(model_name, variation, vectorizer_type, ['char', 'char', 'word'], [(2, 3), (4, 4), (1, 1)])
+                    # train_ml_model(model_name, variation, vectorizer_type, ['char', 'char', 'word'], [(1, 3), (4, 4), (1, 1)])
+
 
     # train dialect matching model
     # for variation in VARIATIONS:

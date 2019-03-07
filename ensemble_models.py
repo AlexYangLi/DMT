@@ -20,7 +20,7 @@ import time
 from os import path
 import numpy as np
 from config import ModelConfig, PROCESSED_DATA_DIR, EMBEDDING_MATRIX_TEMPLATE, LOG_DIR, PERFORMANCE_LOG_TEMPLATE, \
-    VARIATIONS
+    VARIATIONS, PREDICT_DIR
 from train import get_optimizer
 from models.keras_bilstm_model import BiLSTM
 from models.keras_cnnrnn_model import CNNRNN
@@ -34,14 +34,17 @@ from models.keras_text_cnn_model import TextCNN
 from models.keras_vdcnn_model import VDCNN
 from models.sklearn_base_model import SVMModel, LRModel, SGDModel, GaussianNBModel, MultinomialNBModel, \
     BernoulliNBModel, RandomForestModel, GBDTModel, XGBoostModel, LDAModel
-from utils.io import format_filename, write_log
+from utils.io import format_filename, write_log, writer_predict
 from utils.data_loader import load_ngram_data, load_processed_data, load_processed_text_data
 from utils.metrics import eval_all
 from utils.ensemble import mean_ensemble, max_ensemble, vote_ensemble
 
+os.environ['CUDA_VISIBLE_DEVICES'] = '2'
 
-def train_ensemble_model(ensemble_models, model_name, variation, dev_data, train_data=None, binary_threshold=0.5,
-                         checkpoint_dir=None, overwrite=False, log_error=False, **kwargs):
+
+def train_ensemble_model(ensemble_models, model_name, variation, dev_data, train_data=None, test_data=None,
+                         binary_threshold=0.5, checkpoint_dir=None, overwrite=False, log_error=False, save_log=True,
+                         **kwargs):
     config = ModelConfig()
     config.binary_threshold = binary_threshold
     if checkpoint_dir is not None:
@@ -80,9 +83,10 @@ def train_ensemble_model(ensemble_models, model_name, variation, dev_data, train
 
     model.load_best_model()
     print('Logging Info - Evaluate over valid data:')
-    valid_acc, valid_f1, valid_p, valid_r = model.evaluate(dev_data)
+    valid_acc, valid_f1, valid_macro_f1, valid_p, valid_r = model.evaluate(dev_data)
     train_log['valid_acc'] = valid_acc
     train_log['valid_f1'] = valid_f1
+    train_log['valid_macro_f1'] = valid_macro_f1
     train_log['valid_p'] = valid_p
     train_log['valid_r'] = valid_r
     train_log['time_stamp'] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
@@ -95,9 +99,14 @@ def train_ensemble_model(ensemble_models, model_name, variation, dev_data, train
                                                                        dev_text_input['sentence'][error_index],
                                                                        dev_text_input['label'][error_index],
                                                                        error_pred_prob)
+    if save_log:
+        write_log(format_filename(LOG_DIR, PERFORMANCE_LOG_TEMPLATE, variation=variation), log=train_log, mode='a')
 
-    write_log(format_filename(LOG_DIR, PERFORMANCE_LOG_TEMPLATE, variation=variation), log=train_log, mode='a')
-    return valid_acc, valid_f1, valid_p, valid_r
+    if test_data is not None:
+        test_predictions = model.predict(test_data)
+        writer_predict(format_filename(PREDICT_DIR, config.exp_name + '.labels'), test_predictions)
+
+    return valid_acc, valid_f1, valid_macro_f1, valid_p, valid_r
 
 
 def predict_dl_model(data_type, variation, input_level, word_embed_type, word_embed_trainable, batch_size, learning_rate,
@@ -151,6 +160,9 @@ def predict_dl_model(data_type, variation, input_level, word_embed_type, word_em
 
     data = load_processed_data(variation, input_level, data_type)
 
+    if data is None:
+        return None, config.exp_name
+
     if return_proba:
         return model.predict_proba(data), config.exp_name
     else:
@@ -191,6 +203,9 @@ def predict_ml_model(data_type, model_name, variation, vectorizer_type, level, n
 
     model.load_best_model()
     data = load_ngram_data(variation, vectorizer_type, level, ngram_range, data_type)
+
+    if data is None:
+        return None, config.exp_name
     if return_proba:
         return model.predict_proba(data), config.exp_name
     else:
@@ -198,102 +213,168 @@ def predict_ml_model(data_type, model_name, variation, vectorizer_type, level, n
 
 
 if __name__ == '__main__':
-    retrain = True
-    for variation in VARIATIONS:
-        # prepare models' output probability as input for ensemble model
-        train_model_pred_probas = []
-        train_label = load_processed_data(variation, 'word', 'train')['label']
-        dev_model_pred_probas = []
-        dev_label = load_processed_data(variation, 'word', 'dev')['label']
+    # retrain = False
+    # for variation in VARIATIONS:
+    #     # prepare models' output probability as input for ensemble model
+    #     train_model_pred_probas = []
+    #     train_label = load_processed_data(variation, 'word', 'train')['label']
+    #     dev_model_pred_probas = []
+    #     dev_label = load_processed_data(variation, 'word', 'dev')['label']
+    #     test_model_pred_probas = []
+    #
+    #     ensemble_log = {'ensmeble_models': []}
+    #     ensemble_models = []
+    #
+    #     for dl_model_name in []:
+    #         if retrain:
+    #             train_pred_proba, exp_name = predict_dl_model('train', variation, 'word', 'w2v_data', True, 64,
+    #                                                           0.001, 'adam', dl_model_name, return_proba=True)
+    #             train_model_pred_probas.append(train_pred_proba)
+    #         dev_pred_proba, exp_name = predict_dl_model('dev', variation, 'word', 'w2v_data', True, 64, 0.001,
+    #                                                     'adam', dl_model_name, return_proba=True)
+    #         dev_model_pred_probas.append(dev_pred_proba)
+    #
+    #         test_pred_proba, _ = predict_dl_model('test', variation, 'word', 'w2v_data', True, 64, 0.001,
+    #                                               'adam', dl_model_name, return_proba=True)
+    #         if test_pred_proba is not None:
+    #             test_model_pred_probas.append(test_pred_proba)
+    #
+    #         ensemble_models.append(exp_name)
+    #         ensemble_log['ensmeble_models'].append(exp_name)
+    #
+    #     for ml_model_name in ['mnb', 'svm', 'lr']:
+    #         if retrain:
+    #             train_pred_proba, exp_name = predict_ml_model('train', ml_model_name, variation, 'binary',
+    #                                                           'char', (2, 3), return_proba=True)
+    #             train_pred_proba = train_pred_proba[:, 1]
+    #             train_model_pred_probas.append(train_pred_proba)
+    #         dev_pred_proba, exp_name = predict_ml_model('dev', ml_model_name, variation, 'binary', 'char', (2, 3),
+    #                                                     return_proba=True)
+    #         dev_pred_proba = dev_pred_proba[:, 1]
+    #         dev_model_pred_probas.append(dev_pred_proba)
+    #
+    #         test_pred_proba, _ = predict_ml_model('test', ml_model_name, variation, 'binary', 'char', (2, 3),
+    #                                               return_proba=True)
+    #         if test_pred_proba is not None:
+    #             test_model_pred_probas.append(test_pred_proba[:, 1])
+    #
+    #         ensemble_models.append(exp_name)
+    #         ensemble_log['ensmeble_models'].append(exp_name)
+    #
+    #     if retrain:
+    #         train_model_pred_probas = np.column_stack(train_model_pred_probas)
+    #         train_ensemble_input = {'sentence': train_model_pred_probas, 'label': train_label}
+    #     else:
+    #         train_ensemble_input = None
+    #     dev_model_pred_probas = np.column_stack(dev_model_pred_probas)
+    #     dev_ensemble_input = {'sentence': dev_model_pred_probas, 'label': dev_label}
+    #
+    #     if len(test_model_pred_probas) > 0:
+    #         test_model_pred_probas = np.column_stack(test_model_pred_probas)
+    #         test_ensemble_input = {'sentence': test_model_pred_probas}
+    #     else:
+    #         test_ensemble_input = None
+    #
+    #     for binary_threshold in [0.5]:
+    #         ensemble_log['binary_threshold'] = binary_threshold
+    #         for model_name in ['gnb']:
+    #             performance = train_ensemble_model(ensemble_models, model_name, variation, dev_ensemble_input,
+    #                                                train_ensemble_input, binary_threshold=binary_threshold)
+    #             print('Logging Info - {} - meta-classifier ensembling: (acc, f1, p, r):{}'.format(variation,
+    #                                                                                               performance))
+    #             ensemble_log['%s_ensemble' % model_name] = performance
+    #         ensemble_log['timestamp'] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    #     write_log(format_filename(LOG_DIR, PERFORMANCE_LOG_TEMPLATE, variation=variation + '_ensemble'),
+    #               ensemble_log, mode='a')
 
-        ensemble_log = {'ensmeble_models': []}
-        ensemble_models = []
-
-        for dl_model_name in ['cnn', 'cnnrnn', 'dcnn', 'dpcnn', 'han', 'rcnn', 'rnncnn', 'bilstm']:
-            if retrain:
-                train_pred_proba, exp_name = predict_dl_model('train', variation, 'word', 'w2v_data', True, 64,
-                                                              0.001, 'adam', dl_model_name, return_proba=True)
-                train_model_pred_probas.append(train_pred_proba)
-            dev_pred_proba, exp_name = predict_dl_model('dev', variation, 'word', 'w2v_data', True, 64, 0.001,
-                                                        'adam', dl_model_name, return_proba=True)
-            dev_model_pred_probas.append(dev_pred_proba)
-            ensemble_models.append(exp_name)
-            ensemble_log['ensmeble_models'].append(exp_name)
-
-        for ml_model_name in []:
-            if retrain:
-                train_pred_proba, exp_name = predict_ml_model('train', ml_model_name, variation, 'binary',
-                                                              'char', (2, 3), return_proba=True)
-                train_pred_proba = train_pred_proba[:, 1]
-                train_model_pred_probas.append(train_pred_proba)
-            dev_pred_proba, exp_name = predict_ml_model('dev', ml_model_name, variation, 'binary', 'char', (2, 3),
-                                                        return_proba=True)
-            dev_pred_proba = dev_pred_proba[:, 1]
-            dev_model_pred_probas.append(dev_pred_proba)
-            ensemble_models.append(exp_name)
-            ensemble_log['ensmeble_models'].append(exp_name)
-
-        if retrain:
-            train_model_pred_probas = np.column_stack(train_model_pred_probas)
-            train_ensemble_input = {'sentence': train_model_pred_probas, 'label': train_label}
-        else:
-            train_ensemble_input = None
-        dev_model_pred_probas = np.column_stack(dev_model_pred_probas)
-        dev_ensemble_input = {'sentence': dev_model_pred_probas, 'label': dev_label}
-
-        for binary_threshold in np.arange(0.4, 0.62, 0.02):
-            ensemble_log['binary_threshold'] = binary_threshold
-            for model_name in ['svm', 'lr', 'gnb', 'mnb', 'bnb', 'rf', 'xgboost', 'gbdt', 'lda']:
-                performance = train_ensemble_model('all_dl_model', model_name, variation, dev_ensemble_input,
-                                                   train_ensemble_input, binary_threshold=binary_threshold)
-                print('Logging Info - {} - meta-classifier ensembling: (acc, f1, p, r):{}'.format(variation,
-                                                                                                  performance))
-                ensemble_log['%s_ensemble' % model_name] = performance
-            ensemble_log['timestamp'] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-        write_log(format_filename(LOG_DIR, PERFORMANCE_LOG_TEMPLATE, variation=variation + '_ensemble'),
-                  ensemble_log, mode='a')
-
-    for binary_threshold in np.arange(0.4, 0.62, 0.02):
+    for binary_threshold in [0.5]:
         for variation in VARIATIONS:
-            model_pred_probas = []
-            model_pred_classes = []
+            model_dev_pred_probas = []
+            model_dev_pred_classes = []
+            model_test_pred_probas = []
+            model_test_pred_classes = []
+            dl_model_names = ['bilstm']
+            ml_model_names = ['mnb']
+            bilstm_index, mnb_index = -1, -1
+            for idx, name in enumerate(dl_model_names+ml_model_names):
+                if name == 'bilstm':
+                    bilstm_index = idx
+                elif name == 'mnb':
+                    mnb_index = idx
+            fallback = mnb_index if mnb_index != -1 else bilstm_index
 
-            dev_data = load_processed_data(variation, 'word', 'dev')
+            dev_data_label = load_processed_data(variation, 'word', 'dev')['label']
             ensemble_log = {'ensmeble_models': [], 'binary_threshold': binary_threshold}
-            for dl_model_name in ['cnn', 'cnnrnn', 'dcnn', 'dpcnn', 'han', 'rcnn', 'rnncnn', 'bilstm']:
-                pred_proba, exp_name = predict_dl_model('dev', variation, 'word', 'w2v_data', True, 64, 0.001, 'adam',
-                                                        dl_model_name, return_proba=True)
-                pred_class = np.array([1 if proba >= binary_threshold else 0 for proba in pred_proba])
-                model_pred_probas.append(pred_proba)
-                model_pred_classes.append(pred_class)
+
+            for dl_model_name in dl_model_names:
+                dev_pred_proba, exp_name = predict_dl_model('dev', variation, 'word', 'w2v_data', True, 64, 0.001,
+                                                            'adam', dl_model_name, return_proba=True)
+                dev_pred_class = np.array([1 if proba >= binary_threshold else 0 for proba in dev_pred_proba])
+                model_dev_pred_probas.append(dev_pred_proba)
+                model_dev_pred_classes.append(dev_pred_class)
                 ensemble_log['ensmeble_models'].append(exp_name)
 
-            for ml_model_name in []:
-                pred_proba, exp_name = predict_ml_model('dev', ml_model_name, variation, 'binary', 'char', (2, 3),
-                                                        return_proba=True)
-                pred_proba = pred_proba[:, 1]
-                pred_class = np.array([1 if proba >= binary_threshold else 0 for proba in pred_proba])
-                model_pred_probas.append(pred_proba)
-                model_pred_classes.append(pred_class)
+                test_pred_proba, _ = predict_dl_model('test', variation, 'word', 'w2v_data', True, 64, 0.001,
+                                                      'adam', dl_model_name, return_proba=True)
+                if test_pred_proba is not None:
+                    test_pred_class = np.array([1 if proba >= binary_threshold else 0 for proba in test_pred_proba])
+                    model_test_pred_probas.append(test_pred_proba)
+                    model_test_pred_classes.append(test_pred_class)
+
+            for ml_model_name in ml_model_names:
+                dev_pred_proba, exp_name = predict_ml_model('dev', ml_model_name, variation, 'binary', 'char', (2, 3),
+                                                            return_proba=True)
+                dev_pred_proba = dev_pred_proba[:, 1]
+                dev_pred_class = np.array([1 if proba >= binary_threshold else 0 for proba in dev_pred_proba])
+                model_dev_pred_probas.append(dev_pred_proba)
+                model_dev_pred_classes.append(dev_pred_class)
                 ensemble_log['ensmeble_models'].append(exp_name)
 
-            mean_pred_class = mean_ensemble(model_pred_probas, binary_threshold)
-            mean_performance = eval_all(dev_data['label'], mean_pred_class)
-            ensemble_log['mean_ensemble'] = mean_performance
-            print('Logging Info - {} - mean ensembling: (acc, f1, p, r):{}'.format(variation, mean_performance))
+                test_pred_proba, exp_name = predict_ml_model('test', ml_model_name, variation, 'binary', 'char', (2, 3),
+                                                             return_proba=True)
+                if test_pred_proba is not None:
+                    test_pred_proba = test_pred_proba[:, 1]
+                    test_pred_class = np.array([1 if proba >= binary_threshold else 0 for proba in test_pred_proba])
+                    model_test_pred_probas.append(test_pred_proba)
+                    model_test_pred_classes.append(test_pred_class)
 
-            max_pred_class = max_ensemble(model_pred_probas, binary_threshold)
-            max_performance = eval_all(dev_data['label'], max_pred_class)
-            ensemble_log['max_ensemble'] = max_performance
-            print('Logging Info - {} - max ensembling: (acc, f1, p, r):{}'.format(variation, max_performance))
+            mean_dev_pred_class = mean_ensemble(model_dev_pred_probas, binary_threshold)
+            mean_dev_performance = eval_all(dev_data_label, mean_dev_pred_class)
+            ensemble_log['mean_ensemble'] = mean_dev_performance
+            print('Logging Info - {} - mean ensembling: (acc, f1, p, r):{}'.format(variation, mean_dev_performance))
 
-            vote_pred_class = vote_ensemble(model_pred_classes, fallback=-1)
-            vote_performance = eval_all(dev_data['label'], vote_pred_class)
-            ensemble_log['vote_ensemble'] = vote_performance
-            print('Logging Info - {} - majority vote ensembling: (acc, f1, p, r):{}'.format(variation, vote_performance))
+            max_dev_pred_class = max_ensemble(model_dev_pred_probas, binary_threshold)
+            max_dev_performance = eval_all(dev_data_label, max_dev_pred_class)
+            ensemble_log['max_ensemble'] = max_dev_performance
+            print('Logging Info - {} - max ensembling: (acc, f1, p, r):{}'.format(variation, max_dev_performance))
+
+            vote_dev_pred_class = vote_ensemble(model_dev_pred_classes, fallback=fallback)
+            vote_dev_performance = eval_all(dev_data_label, vote_dev_pred_class)
+            ensemble_log['vote_ensemble'] = vote_dev_performance
+            print('Logging Info - {} - majority vote ensembling: (acc, f1, p, r):{}'.format(variation,
+                                                                                            vote_dev_performance))
 
             ensemble_log['time_stamp'] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
             write_log(format_filename(LOG_DIR, PERFORMANCE_LOG_TEMPLATE, variation=variation+'_ensemble'), ensemble_log,
                       mode='a')
+
+            if len(model_test_pred_probas) != 0:
+                mean_test_pred_class = mean_ensemble(model_test_pred_probas, binary_threshold)
+                writer_predict(
+                    format_filename(PREDICT_DIR,
+                                    '%s_%s_mean_ensemble.labels' % (variation, '_'.join(dl_model_names+ml_model_names))),
+                    mean_test_pred_class)
+
+                max_test_pred_class = max_ensemble(model_test_pred_probas, binary_threshold)
+                writer_predict(
+                    format_filename(PREDICT_DIR,
+                                    '%s_%s_max_ensemble.labels' % (variation, '_'.join(dl_model_names+ml_model_names))),
+                    max_test_pred_class)
+
+                vote_test_pred_class = vote_ensemble(model_test_pred_classes, fallback=fallback)
+                writer_predict(
+                    format_filename(PREDICT_DIR,
+                                    '%s_%s_vote_ensemble.labels' % (variation, '_'.join(dl_model_names+ml_model_names))),
+                    vote_test_pred_class)
 
 

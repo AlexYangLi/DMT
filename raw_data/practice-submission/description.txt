@@ -1,0 +1,5 @@
+This is a sample submission archive that contains two files.
+
+There is a file called prediction.labels which contains random predictions against the development set of the Indo-Aryan Language Identification (ILI) task.
+
+There is also this file which contains a description of the system that was used to generate the predictions.

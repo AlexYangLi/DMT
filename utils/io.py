@@ -17,8 +17,8 @@
 from os import path
 import json
 import codecs
-import numpy as np
 import pickle
+from config import ID_TO_LABELS
 
 
 def format_filename(_dir, filename_template, **kwargs):
@@ -53,3 +53,12 @@ def write_log(filename, log, mode='w'):
         writer.write('\n')
         json.dump(log, writer, indent=4, default=str, ensure_ascii=False)
     print('Logging Info - log saved in', filename)
+
+
+def writer_predict(filename, predictions):
+    with open(filename, 'w') as writer:
+        for predict_label_id in predictions:
+            if predict_label_id not in ID_TO_LABELS:
+                raise ValueError('Predict Label ID Not Understood: {}'.format(predict_label_id))
+            writer.write(ID_TO_LABELS.get(predict_label_id)+'\n')
+    print('Logging Info - Test Predictions saved in', filename)

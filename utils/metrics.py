@@ -26,6 +26,10 @@ def eval_f1(y_true, y_pred):
     return f1_score(y_true, y_pred)
 
 
+def eval_macro_f1(y_true, y_pred):
+    return f1_score(y_true, y_pred, average='macro')
+
+
 def eval_precision(y_true, y_pred):
     return precision_score(y_true, y_pred)
 
@@ -35,7 +39,8 @@ def eval_recall(y_true, y_pred):
 
 
 def eval_all(y_true, y_pred):
-    return eval_acc(y_true, y_pred), eval_f1(y_true, y_pred), eval_precision(y_true, y_pred), eval_recall(y_true, y_pred)
+    return eval_acc(y_true, y_pred), eval_f1(y_true, y_pred), eval_macro_f1(y_true, y_pred),\
+           eval_precision(y_true, y_pred), eval_recall(y_true, y_pred)
 
 
 def return_error_index(y_true, y_pred):
@@ -44,6 +49,9 @@ def return_error_index(y_true, y_pred):
 
 def get_confusion_matrix(y_true, y_pred):
     return confusion_matrix(y_true, y_pred)
+
+
+
 
 
 

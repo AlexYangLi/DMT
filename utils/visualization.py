@@ -101,17 +101,17 @@ def plot_sequence_length(sequences, bins=50, title='sequence length', save_path=
         plt.show()
 
 
-def plot_line_chart(x_datas, y_datas, markers, labels, title, xlabel, ylabel, save_path=None, show=True):
+def plot_line_chart(x_datas, y_datas, markers, labels, title, xlabel, ylabel, xrange=None, yrange=None,
+                    save_path=None, show=True):
     plt.grid(True)
-    plt.ylim((0.45, 0.95))
-    plt.yticks(np.arange(0.5, 1.0, 0.05))
-    plt.xticks(np.arange(1, 9, 1.0))
+    plt.yticks(xrange)
+    plt.xticks(yrange)
     for x_data, y_data, marker, label in zip(x_datas, y_datas, markers, labels):
         plt.plot(x_data, y_data, marker)
     plt.title(title)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
-    plt.legend(labels, loc=1)
+    plt.legend(labels)
 
     if show:
         plt.show()
@@ -130,32 +130,34 @@ if __name__ == '__main__':
     #                       title="Confusion Matrix")
 
     n_gram = [1, 2, 3, 4, 5, 6, 7, 8]
-    s_svm_word = [0.8385, 0.7075, 0.5515, 0.515, 0.5035, 0.5015, 0.5005, 0.5]
-    s_svm_char = [0.8115, 0.862, 0.876, 0.853, 0.816, 0.7905, 0.7295, 0.6505]
-    s_lr_word = [0.859, 0.706, 0.552, 0.515, 0.5045, 0.5015, 0.5005, 0.5]
-    s_lr_char = [0.8185, 0.872, 0.879, 0.8505, 0.824, 0.7805, 0.727, 0.65]
-    s_mnb_word = [0.8785, 0.6575, 0.54, 0.51, 0.5035, 0.5015, 0.5005, 0.5005]
-    s_mnb_char = [0.8225, 0.8935, 0.9015, 0.8835, 0.8455,  0.7755, 0.6795, 0.608]
-    t_svm_word = [0.846, 0.7085, 0.5515, 0.515, 0.5035, 0.5015, 0.5005, 0.5]
-    t_svm_char = [0.837, 0.884, 0.8845, 0.86, 0.823, 0.793, 0.73, 0.6505]
-    t_lr_word = [0.8635, 0.707, 0.552, 0.515, 0.5045, 0.5015, 0.5005, 0.5]
-    t_lr_char = [0.8455, 0.889, 0.884, 0.857, 0.8315, 0.7835, 0.7275, 0.65]
-    t_mnb_word = [0.886, 0.658, 0.54, 0.51, 0.5035, 0.5015, 0.5005, 0.5005]
-    t_mnb_char = [0.848, 0.91, 0.915, 0.891, 0.8495, 0.779, 0.68, 0.608]
+    s_svm_word = [0.8384, 0.6886, 0.4392, 0.3658, 0.3411, 0.3367, 0.3344, 0.3333]
+    s_svm_char = [0.8115, 0.8620, 0.8760, 0.8474, 0.8156, 0.78810, 0.7154, 0.6094]
+    s_lr_word = [0.8590, 0.6873, 0.4401, 0.3658, 0.3433, 0.3367, 0.3344, 0.3333]
+    s_lr_char = [0.8185, 0.8720, 0.8790, 0.8504, 0.8233, 0.7765, 0.7118, 0.6087]
+    s_mnb_word = [0.8784, 0.6220, 0.4165, 0.3551, 0.3411, 0.3367, 0.3344, 0.3344]
+    s_mnb_char = [0.8225, 0.8935, 0.9015, 0.8835, 0.8450,  0.7715, 0.6536, 0.5443]
+    t_svm_word = [0.8460, 0.6896, 0.4392, 0.3658, 0.3411, 0.3367, 0.3344, 0.3333]
+    t_svm_char = [0.8370, 0.8840, 0.8845, 0.8559, 0.8227, 0.7907, 0.7159, 0.6094]
+    t_lr_word = [0.8634, 0.6885, 0.4401, 0.3658, 0.3432, 0.3367, 0.3344, 0.3333]
+    t_lr_char = [0.8455, 0.8890, 0.8840, 0.8570, 0.8309, 0.7797, 0.7122, 0.6087]
+    t_mnb_word = [0.8860, 0.6224, 0.4165, 0.3552, 0.3411, 0.3367, 0.3344, 0.3333]
+    t_mnb_char = [0.8480, 0.9100, 0.9150, 0.8910, 0.8490, 0.7750, 0.6540, 0.5443]
     mark = ['ro-', 'bo-']
     labels = ['word', 'char']
 
     fig = plt.figure(figsize=(11, 5.5))
     plt.subplot(121)
-    plot_line_chart([n_gram]*6, [s_svm_word, s_svm_char, s_lr_word, s_lr_char, s_mnb_word, s_mnb_char],
+    plot_line_chart([n_gram] * 6, [s_svm_word, s_svm_char, s_lr_word, s_lr_char, s_mnb_word, s_mnb_char],
                     ['go-', 'go:', 'ro-', 'ro:', 'bo-', 'bo:'],
                     ['svm_word', 'svm_char', 'lr_word', 'lr_char', 'mnb_word', 'mnb_char'],
-                    'Simplified version data set', 'N-gram', 'Accuracy', save_path=None, show=False)
+                    'Simplified', 'N-gram size', 'Macro-weighted f1', np.arange(0.3, 1.0, 0.05),
+                    np.arange(1, 9, 1), save_path=None, show=False)
     plt.subplot(122)
     plot_line_chart([n_gram] * 6, [t_svm_word, t_svm_char, t_lr_word, t_lr_char, t_mnb_word, t_mnb_char],
                     ['go-', 'go:', 'ro-', 'ro:', 'bo-', 'bo:'],
                     ['svm_word', 'svm_char', 'lr_word', 'lr_char', 'mnb_word', 'mnb_char'],
-                    'Traditional version data set', 'N-gram', 'Accuracy', save_path=None, show=False)
+                    'Traditional', 'N-gram size', 'Macro-weighted f1',  np.arange(0.3, 1.0, 0.05),
+                    np.arange(1, 9, 1), save_path=None, show=False)
     plt.savefig('../img/single_n_gram_1_2.png', bbox_inches='tight', dpi=200)
     # fig = plt.figure(figsize=(9, 6))
     # fig.tight_layout()

@@ -23,14 +23,19 @@ PROCESSED_DATA_DIR = './data'
 LOG_DIR = './log'
 MODEL_SAVED_DIR = './ckpt'
 IMG_DIR = './img'
+PREDICT_DIR = './predict'
 
 SIMP_DIR = path.join(RAW_DATA_DIR, 'TRAININGSET-DMT_SIMP-VARDIAL2019')
+SIMP_TEST_DIR = path.join(RAW_DATA_DIR, 'dmt_simp_test')
 SIMP_TRAIN_FILENAME = path.join(SIMP_DIR, 'train.txt')
 SIMP_DEV_FILENAME = path.join(SIMP_DIR, 'dev.txt')
+SIMP_TEST_FILENAME = path.join(SIMP_TEST_DIR, 'dmt-simp-test.txt')
 
 TRAD_DIR = path.join(RAW_DATA_DIR, 'TRAININGSET-DMT_TRAD-VARDIAL2019')
+TRAD_TEST_DIR = path.join(RAW_DATA_DIR, 'dmt_trad_test')
 TRAD_TRAIN_FILENAME = path.join(TRAD_DIR, 'train.txt')
 TRAD_DEV_FILENAME = path.join(TRAD_DIR, 'dev.txt')
+TRAD_TEST_FILENAME = path.join(TRAD_TEST_DIR, 'dmt-trad-test.txt')
 
 TRAIN_DATA_TEMPLATE = '{variation}_train.pkl'
 DEV_DATA_TEMPLATE = '{variation}_dev.pkl'
@@ -64,6 +69,7 @@ VARIATIONS = ['simplified', 'traditional']
 class ModelConfig(object):
     def __init__(self):
         # input configuration
+        self.data_augment = False
         self.variation = 'simplified'
         self.input_level = 'word'
         self.word_max_len = 66

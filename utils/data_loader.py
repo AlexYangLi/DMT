@@ -14,8 +14,8 @@
 
 """
 
+import os
 import codecs
-import json
 import numpy as np
 import pandas as pd
 from scipy.sparse import hstack, coo_matrix, csr_matrix, csc_matrix
@@ -57,7 +57,11 @@ def load_processed_text_data(variation, data_type):
         filename = format_filename(PROCESSED_DATA_DIR, TEST_DATA_TEMPLATE, variation=variation)
     else:
         raise ValueError('Data Type Not Understood: {}'.format(data_type))
-    return pickle_load(filename)
+
+    if os.path.exists(filename):
+        return pickle_load(filename)
+    else:
+        return None
 
 
 def load_processed_data(variation, level, data_type):
@@ -69,7 +73,11 @@ def load_processed_data(variation, level, data_type):
         filename = format_filename(PROCESSED_DATA_DIR, TEST_IDS_MATRIX_TEMPLATE, variation=variation, level=level)
     else:
         raise ValueError('Data Type Not Understood: {}'.format(data_type))
-    return pickle_load(filename)
+
+    if os.path.exists(filename):
+        return pickle_load(filename)
+    else:
+        return None
 
 
 def load_single_ngram_data(variation, vectorizer_type, level, ngram_range, data_type):
@@ -84,7 +92,10 @@ def load_single_ngram_data(variation, vectorizer_type, level, ngram_range, data_
                                    type=vectorizer_type, level=level, ngram_range=ngram_range)
     else:
         raise ValueError('Data Type Not Understood: {}'.format(data_type))
-    return pickle_load(filename)
+    if os.path.exists(filename):
+        return pickle_load(filename)
+    else:
+        return None
 
 
 def load_ngram_data(variation, vectorizer_type, level, ngram_range, data_type):

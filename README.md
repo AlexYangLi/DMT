@@ -74,8 +74,6 @@ Learn similarities between the same dialects and dissimilarities between differe
 ### Pre-processing
 ```
 python3 preprocess.py
-python3 prepare_ngram_fetures.py    # todo: merge into preprocess.py
-python3 data_augment.py             # todo: merge into preprocess.py
 ```
 
 ### Train
@@ -84,6 +82,10 @@ python3 train.py
 
 ```
 
+### Ensemble
+```
+python3 ensemble_models.py
+```
 
 ### Performance of dl based models
 
@@ -374,3 +376,22 @@ Not helping.
 |all_dl_model                            |  mean         | 0.9215  | 0.9207  | 0.9297 | 0.912  |
 |all_dl_model                            |  max          | 0.91    | 0.9090  | 0.9192 | 0.899  |
 |all_dl_model                            |  vote         | 0.9195  | 0.9185  | 0.9303 | 0.907  |
+
+
+### Performance of shared task
+
+- simplified
+
+| model                               |  acc   | f1_mocro  | f1_macro  | f1_weighted |
+|-------------------------------------|--------|-----------|-----------|-------------|
+|simplified_bilstm_word_w2v_data_tune |0.812000|0.812000   |0.811795   |0.81179      |
+|simplified_mnb_binary_char_(2, 3)    |0.850500|0.850500   |0.849895   |0.849895     |
+|simplified_bilstm_mnb_mean_ensemble  |0.853500|0.853500   |0.853031   |0.853031     |
+
+- traditional
+
+| model                               |  acc   | f1_mocro  | f1_macro  | f1_weighted |
+|-------------------------------------|--------|-----------|-----------|-------------|
+|simplified_bilstm_word_w2v_data_tune |0.845000|0.845000   |0.844965   |0.844965     |
+|simplified_mnb_binary_char_(2, 3)    |0.865500|0.865500   |0.865022   |0.865022     |
+|simplified_bilstm_mnb_mean_ensemble  |0.869000|0.869000   |0.868710   |0.868710     |

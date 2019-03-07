@@ -20,7 +20,7 @@ import numpy as np
 
 from keras.callbacks import ModelCheckpoint, EarlyStopping
 from models.base_model import BaseModel
-from utils.metrics import eval_acc, eval_f1, return_error_index
+from utils.metrics import eval_acc, eval_f1, eval_macro_f1, eval_recall, eval_precision, return_error_index
 
 
 class KerasBaseModel(BaseModel):
@@ -87,8 +87,11 @@ class KerasBaseModel(BaseModel):
 
         acc = eval_acc(labels, predictions)
         f1 = eval_f1(labels, predictions)
-        print('acc : {}, f1 : {}'.format(acc, f1))
-        return acc, f1
+        macro_f1 = eval_macro_f1(labels, predictions)
+        p = eval_precision(labels, predictions)
+        r = eval_recall(labels, predictions)
+        print('acc : {}, f1 : {}, macro_f1: {}, p : {}, r: {}'.format(acc, f1, macro_f1, p, r))
+        return acc, f1, macro_f1, p, r
 
     def predict(self, data):
         predictions = self.predict_proba(data)

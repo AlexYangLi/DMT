@@ -28,7 +28,7 @@ from xgboost import XGBClassifier
 
 
 from models.base_model import BaseModel
-from utils.metrics import eval_acc, eval_f1, eval_precision, eval_recall, return_error_index
+from utils.metrics import eval_acc, eval_f1, eval_precision, eval_recall, eval_macro_f1, return_error_index
 
 
 class SklearnBaseModel(BaseModel):
@@ -63,23 +63,24 @@ class SklearnBaseModel(BaseModel):
         print('Model saved')
 
     def evaluate(self, data):
+        predictions = self.predict(data)
+        labels = data['label']
+
+        acc = eval_acc(labels, predictions)
+        f1 = eval_f1(labels, predictions)
+        macro_f1 = eval_macro_f1(labels, predictions)
+        p = eval_precision(labels, predictions)
+        r = eval_recall(labels, predictions)
+        print('acc: {}, f1: {}, macro_f1 : {}， p: {}, r: {}'.format(acc, f1, macro_f1, p, r))
+        return acc, f1, macro_f1, p, r
+
+    def predict(self, data):
         try:
             pred_probas = self.predict_proba(data)[:, 1]
             predictions = np.array([1 if proba >= self.config.binary_threshold else 0 for proba in pred_probas])
         except AttributeError:
             predictions = self.predict(data)
-
-        labels = data['label']
-
-        acc = eval_acc(labels, predictions)
-        f1 = eval_f1(labels, predictions)
-        p = eval_precision(labels, predictions)
-        r = eval_recall(labels, predictions)
-        print('acc: {}, f1: {}, p: {}, r: {}'.format(acc, f1, p, r))
-        return acc, f1, p, r
-
-    def predict(self, data):
-        return self.model.predict(data['sentence'])
+        return predictions
 
     def predict_proba(self, data):
         # Note: some model (eg. SVM) doesn't have predict_proba func
